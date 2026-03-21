@@ -41,7 +41,7 @@ router.post('/generate', async (req, res) => {
         ]);
 
         // Save both to DB
-        await saveAssessmentToDb(userId, claimedAssessment, jobTitle);
+        await saveAssessmentToDb(userId, claimedAssessment, "Claimed Skill");
         await saveAssessmentToDb(userId, targetAssessment, jobTitle);
 
         // Merge assessments into one response
