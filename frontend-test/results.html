@@ -58,14 +58,11 @@
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             const token = localStorage.getItem('token');
-            const user = JSON.parse(localStorage.getItem('user') || '{}');
             
-            if (!token || !user.id) {
+            if (!token) {
                 window.location.href = '/login';
                 return;
             }
-
-            const userId = user.id;
 
             const status = document.getElementById('status');
             const table = document.getElementById('resultsTable');
@@ -216,10 +213,8 @@
             const stepsEl = document.getElementById('lpSteps');
 
             const token = localStorage.getItem('token');
-            const user = JSON.parse(localStorage.getItem('user') || '{}');
-            const userId = user.id;
 
-            if (!token || !userId) {
+            if (!token) {
                 if (!autoLoad) alert("Please log in again.");
                 return;
             }

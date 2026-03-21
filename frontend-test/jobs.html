@@ -21,10 +21,8 @@
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             const token = localStorage.getItem('token');
-            const user = JSON.parse(localStorage.getItem('user') || '{}');
-            const userId = user.id;
 
-            if (!token || !userId) {
+            if (!token) {
                 window.location.href = '/login';
                 return;
             }

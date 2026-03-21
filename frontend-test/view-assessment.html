@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Take Assessment</title>
+</head>
+<body style="font-family: sans-serif; padding: 20px;">
+    <div><a href="/assessment">&larr; Back to Dashboard</a></div>
+    <h1 id="skillTitle">Loading Assessment...</h1>
+    <div id="questionsContainer"></div>
+    <button id="submitBtn" style="color: white; background: black; padding: 10px; margin-top: 20px; display: none;">Submit Answers</button>
+    <div id="scoreBox" style="margin-top: 20px; font-weight: bold;"></div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const assessmentId = urlParams.get('id');
+        const token = localStorage.getItem('token');
+
+        if (!token || !assessmentId) {
+            window.location.href = '/login';
+        }
+
+        async function loadAssessment() {
+            try {
+                const res = await fetch(`/api/v1/assessment/${assessmentId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
+
+                const assmnt = data.assessment;
+                document.getElementById('skillTitle').textContent = `Assessment: ${assmnt.skill} (${assmnt.job_title})`;
+                
+                const container = document.getElementById('questionsContainer');
+                assmnt.questions.forEach((q, qIndex) => {
+                    const qDiv = document.createElement('div');
+                    qDiv.className = 'q-block';
+                    qDiv.style.marginBottom = '20px';
+                    qDiv.dataset.dbId = q.id;
+                    qDiv.dataset.correct = q.correct_answer;
+
+                    // Escape HTML characters for questions and code
+                    const escapedQuestion = q.question.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                    const escapedCode = (q.code_snippet && q.code_snippet !== 'null') 
+                        ? q.code_snippet.replace(/</g, '&lt;').replace(/>/g, '&gt;') 
+                        : null;
+
+                    let html = `<p><strong>Q${qIndex + 1}:</strong> ${escapedQuestion}</p>`;
+                    if (escapedCode) {
+                        html += `<pre style="background: #eee; padding: 10px;">${escapedCode}</pre>`;
+                    }
+
+                    if (q.options && q.options.length > 0) {
+                        q.options.forEach(opt => {
+                            const escapedOpt = opt.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                            html += `<label style="display: block;"><input type="radio" name="q-${qIndex}" value="${escapedOpt}"> ${escapedOpt}</label>`;
+                        });
+                    } else {
+                        html += `<input type="text" name="q-${qIndex}" style="width: 100%; max-width: 400px; padding: 5px;">`;
+                    }
+                    qDiv.innerHTML = html;
+                    container.appendChild(qDiv);
+                });
+
+                document.getElementById('submitBtn').style.display = 'block';
+            } catch (err) {
+                document.body.innerHTML = `<h2 style="color:red">Error: ${err.message}</h2><a href="/assessment">Go back</a>`;
+            }
+        }
+
+        document.getElementById('submitBtn').onclick = async () => {
+            const blocks = document.querySelectorAll('.q-block');
+            const results = [];
+            let score = 0;
+
+            blocks.forEach((block, idx) => {
+                const radio = block.querySelector(`input[type="radio"]:checked`);
+                const text = block.querySelector(`input[type="text"]`);
+                const userAns = radio ? radio.value : (text ? text.value : '');
+                
+                results.push({
+                    question_id: block.dataset.dbId,
+                    selected_option: userAns
+                });
+            });
+
+            document.getElementById('scoreBox').textContent = 'Submitting answers...';
+            
+            try {
+                const res = await fetch('/api/v1/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ results })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    alert("Answers saved!");
+                    document.getElementById('scoreBox').textContent = `Final Score: ${data.score} / ${blocks.length}`;
+                } else throw new Error(data.error);
+            } catch (err) {
+                alert("Error: " + err.message);
+                document.getElementById('scoreBox').textContent = 'Could not save score.';
+            }
+        };
+
+        loadAssessment();
+    </script>
+</body>
+</html>
