@@ -17,31 +17,49 @@ const router = express.Router();
 router.use(authMiddleware);
 
 /**
- * Generate a new assessment for a job role and skills.
+ * Generate both claimed and target assessments from resume text.
  */
-router.post('/generate',  async (req, res) => {
+router.post('/generate', async (req, res) => {
     try {
-        let { jobTitle, skills, type } = req.body;
+        const { resumeText } = req.body;
         const userId = req.user.id;
 
-        if (!jobTitle || !skills) {
-            return res.status(400).json({ error: "Missing jobTitle or skills" });
+        if (!resumeText) {
+            return res.status(400).json({ error: "Missing resumeText" });
         }
 
-        const assessmentType = type || 'claimed';
+        // Fetch job title from user profile
+        const userRes = await pool.query('SELECT preferred_job_title FROM users WHERE id = $1', [userId]);
+        const jobTitle = (userRes.rows.length > 0 && userRes.rows[0].preferred_job_title)
+            ? userRes.rows[0].preferred_job_title
+            : 'Software Developer';
 
-        // Auto-fetch job title from user profile if not provided or for target skills
-        if (assessmentType === 'target') {
-            const userRes = await pool.query('SELECT preferred_job_title FROM users WHERE id = $1', [userId]);
-            if (userRes.rows.length > 0 && userRes.rows[0].preferred_job_title) {
-                jobTitle = userRes.rows[0].preferred_job_title;
+        // Generate both assessment types in parallel
+        const [claimedAssessment, targetAssessment] = await Promise.all([
+            generateAssessment(jobTitle, [], 'claimed', resumeText),
+            generateAssessment(jobTitle, [], 'target', resumeText)
+        ]);
+
+        // Save both to DB
+        await saveAssessmentToDb(userId, claimedAssessment, jobTitle);
+        await saveAssessmentToDb(userId, targetAssessment, jobTitle);
+
+        // Merge assessments into one response
+        const allAssessments = [];
+        if (claimedAssessment.assessments && Array.isArray(claimedAssessment.assessments)) {
+            allAssessments.push(...claimedAssessment.assessments);
+        }
+        if (targetAssessment.assessments && Array.isArray(targetAssessment.assessments)) {
+            allAssessments.push(...targetAssessment.assessments);
+        }
+
+        res.json({
+            success: true,
+            assessment: {
+                job_title: jobTitle,
+                assessments: allAssessments
             }
-        }
-
-        const assessment = await generateAssessment(jobTitle, skills, assessmentType);
-        await saveAssessmentToDb(userId, assessment, jobTitle);
-
-        res.json({ success: true, assessment });
+        });
 
     } catch (err) {
         console.error("Error generating assessment:", err);
@@ -49,9 +67,9 @@ router.post('/generate',  async (req, res) => {
     }
 });
 
-/**
- * List all generated assessments and their scores for the current user.
- */
+
+// List all generated assessments and their scores for the current user.
+
 router.get('/my-results', async (req, res) => {
     try {
         const userId = req.user.id;
@@ -63,9 +81,9 @@ router.get('/my-results', async (req, res) => {
     }
 });
 
-/**
- * Get details for a specific assessment plus questions.
- */
+
+// Get details for a specific assessment plus questions.
+
 router.get('/assessment/:id', async (req, res) => {
     try {
         const { id } = req.params;
@@ -83,9 +101,9 @@ router.get('/assessment/:id', async (req, res) => {
     }
 });
 
-/**
- * Submit answers for a specific assessment.
- */
+
+// Submit answers for a specific assessment.
+
 router.post('/submit', async (req, res) => {
     try {
         const { results } = req.body;
@@ -104,9 +122,9 @@ router.post('/submit', async (req, res) => {
     }
 });
 
-/**
- * Generate a personalized learning path based on assessment performance.
- */
+
+// Generate a personalized learning path based on assessment performance.
+
 router.post('/generate-learning-path', async (req, res) => {
     try {
         const userId = req.user.id;
@@ -157,9 +175,8 @@ router.post('/generate-learning-path', async (req, res) => {
     }
 });
 
-/**
- * Job recommendation route.
- */
+//Job recommendation route.
+
 router.get('/recommendations', async (req, res) => {
     try {
         const userId = req.user.id;

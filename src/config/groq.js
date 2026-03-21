@@ -25,7 +25,7 @@ Return ONLY a valid JSON object with a single key "skills" containing an array o
     }
 }
 
-export async function generateAssessment(jobTitle, skills, type = 'claimed') {
+export async function generateAssessment(jobTitle, skills, type = 'claimed', resumeText = null) {
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
     
@@ -45,6 +45,11 @@ export async function generateAssessment(jobTitle, skills, type = 'claimed') {
     let prompt = promptTemplate.replace(/{job_title}/g, jobTitle);
     prompt = prompt.replace(/{skills}/g, JSON.stringify(assessmentSkills));
 
+    // If resume text is provided, inject it directly into the prompt
+    if (resumeText) {
+        prompt = prompt.replace(/{resume_text}/g, resumeText);
+    }
+
     try {
         const chatCompletion = await groq.chat.completions.create({
             "messages": [
@@ -54,7 +59,9 @@ export async function generateAssessment(jobTitle, skills, type = 'claimed') {
                 },
                 {
                     "role": "user",
-                    "content": "Please generate the assessment."
+                    "content": resumeText 
+                        ? "Here is the candidate's resume. Please extract their skills and generate the assessment."
+                        : "Please generate the assessment."
                 }
             ],
             "model": "llama-3.3-70b-versatile",
@@ -106,3 +113,36 @@ export async function generateLearningPath(jobTitle, assessmentResults) {
         throw err;
     }
 }
+
+export async function extractResumeData(resumeText) {
+    const prompt = `You are a professional resume parser. Analyze the following resume text and extract:
+1. The candidate's most relevant job title or role (what they currently are or aspire to be).
+2. A list of their technical and professional skills.
+
+Resume Text:
+---
+${resumeText}
+---
+
+Return ONLY a valid JSON object with exactly these keys:
+- "jobTitle": a single string representing their primary role (e.g., "Frontend Developer", "Data Scientist")
+- "skills": an array of skill strings (e.g., ["JavaScript", "React", "Node.js", "SQL"])
+
+Extract real skills only. Do not invent skills not mentioned in the resume. Include programming languages, frameworks, tools, and soft skills if clearly stated. Do not include any markdown formatting.`;
+
+    try {
+        const chatCompletion = await groq.chat.completions.create({
+            "messages": [{ "role": "user", "content": prompt }],
+            "model": "llama-3.3-70b-versatile",
+            "temperature": 0.1,
+            "response_format": { "type": "json_object" }
+        });
+
+        const content = chatCompletion.choices[0]?.message?.content;
+        return JSON.parse(content || '{"jobTitle": "", "skills": []}');
+    } catch (err) {
+        console.error("Groq resume extraction failed:", err);
+        throw err;
+    }
+}
+

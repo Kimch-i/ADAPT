@@ -1,14 +1,20 @@
 You are a professional assessment designer. A candidate's resume has been parsed and the following variables have been extracted:
 
-- **Job Title**: {job_title}
-- **Claimed Skills**: {skills}
-  *(e.g., ["typescript", "python", "system design", "software engineering", "ci/cd", "junior frontend developer"])*
+- **Target Job Title**: {job_title}
+- **Claimed Skills (if pre-extracted)**: {skills}
+
+If the skills array above is empty or missing, you MUST extract the candidate's actual technical and professional skills from the **Raw Resume Text** below. Do NOT use the job title itself as a skill. Extract only real skills like programming languages, frameworks, tools, methodologies, and domain knowledge.
+
+**Raw Resume Text (if available):**
+{resume_text}
 
 ---
 
 ## Task
 You must generate a **Claimed Skills Assessment**.
-Generate a separate 15-question assessment for each individual skill listed in **{skills}**, tailored to the **{job_title}** role.
+If **{skills}** is empty, first extract the candidate's skills from the resume text above. Then generate a separate 15-question assessment for each extracted skill.
+
+Do NOT include the job title (e.g., "{job_title}") as one of the skills. Skills are things like "React", "Python", "SQL", "System Design" — not job roles.
 
 Do NOT mix skills across assessments. Each assessment must be fully dedicated to one skill only.
 
@@ -17,7 +23,7 @@ CRITICAL INSTRUCTION: You MUST generate EXACTLY 15 questions for every single sk
 ---
 
 ## Step 1 — Skill Priority Assignment
-Analyze the **{job_title}** and assign each skill in **{skills}** a priority tier:
+Analyze the **{job_title}** and assign each extracted skill a priority tier:
 
 - **high priority** → Core skills essential and daily-use for this role
 - **medium priority** → Supporting skills useful but not the main focus
@@ -68,7 +74,7 @@ You must return ONLY a valid JSON object. Ensure all nested code snippets use si
       "skill": "<skill name>",
       "priority": "<high priority | medium priority | low priority>",
       "question_approach": "<technical | conceptual | mixed>",
-      "title": "<Skill Name> Assessment — {job_title}",
+      "title": "<Skill Name> Assessment",
       "total_questions": 15,
       "questions": [
         {

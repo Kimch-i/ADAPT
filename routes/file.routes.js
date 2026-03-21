@@ -6,44 +6,63 @@ import pool from '../db/db.js';
 
 const router = express.Router();
 
-//null pdf parse context, then true for raw text to get raw text
-const pdfParser = new PDFParser(null, true);
-
-
 //saving on RAM
 const upload = multer({ storage: multer.memoryStorage() });
 
 
-//upload.single uses the name resume to find what file to use from frontend
-//upload.single is so that we can get req.file.buffer
-router.post('/extract', authMiddleware, upload.single('resume'), (req, res) => {
-    console.log("extract")
-    if(!req.file){
-        return res.json({success:false, error:"received no file"});
+/**
+ * Extract raw text from an uploaded resume PDF.
+ * Returns the raw text only — no AI call.
+ */
+router.post('/extract', authMiddleware, upload.single('resume'), async (req, res) => {
+    console.log("extract");
+    if (!req.file) {
+        return res.status(400).json({ success: false, error: "No file received" });
     }
-    pdfParser.parseBuffer(req.file.buffer);
 
-    pdfParser.on("pdfParser_dataReady", (pdfData) => {
-        const rawText = pdfParser.getRawTextContent();
-        const decodedText = decodeURIComponent(rawText);
-        console.log(decodedText);
-    });
+    try {
+        const rawText = await new Promise((resolve, reject) => {
+            const parser = new PDFParser(null, true);
+            parser.on("pdfParser_dataReady", () => {
+                resolve(decodeURIComponent(parser.getRawTextContent()));
+            });
+            parser.on("pdfParser_dataError", (err) => {
+                reject(err);
+            });
+            parser.parseBuffer(req.file.buffer);
+        });
+
+        console.log("Parsed resume text length:", rawText.length);
+        console.log(rawText);
+
+        res.json({
+            success: true,
+            resumeText: rawText
+        });
+
+    } catch (err) {
+        console.error("Resume extraction error:", err);
+        res.status(500).json({ success: false, error: "Failed to parse resume: " + err.message });
+    }
 });
 
+
+/**
+ * Upload and save a resume file to the database.
+ */
 router.post('/upload', authMiddleware, upload.single('resume'), async (req, res) => {
-    
-    if(!req.file){
-        return res.status(400).send("no file uploaded");        
+    if (!req.file) {
+        return res.status(400).send("no file uploaded");
     }
-    
-    try{
-        const query = `INSERT INTO files (user_id, file_name, file_data) VALUES ($1, $2, $3)`;  
+
+    try {
+        const query = `INSERT INTO files (user_id, file_name, file_data) VALUES ($1, $2, $3)`;
         const response = await pool.query(query, [req.user.id, req.file.originalname, req.file.buffer]);
-   
+
         res.status(201).json(response.rows[0]);
-    }catch(err){    
+    } catch (err) {
         console.error(err);
-        return res.status(401).json({success: false, error: err});
+        return res.status(401).json({ success: false, error: err });
     }
 });
 
