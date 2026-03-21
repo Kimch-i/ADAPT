@@ -88,62 +88,63 @@
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #004545 0%, #005f5f 100%);
+        }
     </style>
 </head>
 
-<body class="bg-surface font-body text-on-surface antialiased">
-    <main class="min-h-screen flex flex-col md:flex-row overflow-hidden">
+<body class="bg-background font-body text-on-surface antialiased">
+    <main class="min-h-screen flex flex-col md:flex-row">
 
-        <section class="relative w-full md:w-5/12 lg:w-4/12 bg-primary-container p-8 md:p-12 lg:p-16 flex flex-col justify-between overflow-hidden">
-            <div class="absolute -top-24 -left-24 w-96 h-96 bg-primary rounded-full blur-[120px] opacity-40"></div>
-            <div class="absolute -bottom-24 -right-24 w-64 h-64 bg-secondary-container rounded-full blur-[100px] opacity-20"></div>
+        <section class="hidden md:flex md:w-1/2 hero-gradient relative flex-col justify-between p-16 overflow-hidden">
+            <div class="absolute -top-24 -left-24 w-96 h-96 bg-primary-container rounded-full opacity-20 blur-3xl"></div>
 
             <div class="relative z-10">
-                <div class="flex items-center gap-2 mb-16">
+                <div class="flex items-center gap-2 mb-20">
                     <div class="w-10 h-10 bg-surface-container-lowest rounded-lg flex items-center justify-center">
                         <img src="assets/meoew.png" alt="Adapt Icon" class="w-8 h-8">
                     </div>
-                    <span class="text-xl font-black tracking-tighter text-surface-container-lowest font-headline">ADAPT</span>
+                    <span class="font-headline font-extrabold text-2xl text-on-primary tracking-tighter">ADAPT</span>
+                </div>
+                <div class="max-w-xl">
+                    <h1 class="font-headline font-extrabold text-5xl lg:text-6xl text-on-primary leading-tight tracking-tight mb-6">
+                        The standard for professional excellence.
+                    </h1>
+                    <p class="text-on-primary-container text-xl leading-relaxed opacity-90">
+                        Join a network of verified experts where credentials are more than just words—they are proven assets.
+                    </p>
+                </div>
+            </div>
+
+            <div class="relative z-10 grid grid-cols-1 gap-4 mt-12">
+                <div class="glass-card p-6 rounded-xl flex items-center gap-5 transition-transform hover:scale-[1.02] duration-300">
+                    <div class="bg-primary p-3 rounded-lg shadow-inner">
+                        <span class="material-symbols-outlined text-primary-fixed" data-icon="security">security</span>
+                    </div>
+                    <div>
+                        <h3 class="font-headline font-bold text-on-primary text-lg">Enterprise-Grade Security</h3>
+                        <p class="text-on-primary-container text-sm opacity-80">Military-grade protection for your professional data.</p>
+                    </div>
                 </div>
 
-                <h1 class="font-headline text-4xl lg:text-5xl font-extrabold text-white leading-tight tracking-tight mb-6">
-                    The standard for professional excellence.
-                </h1>
-                <p class="text-on-primary-container text-lg font-medium max-w-md leading-relaxed mb-12">
-                    Join a network of verified experts where credentials are more than just words—they are proven assets.
-                </p>
-
-                <div class="space-y-4">
-                    <div class="glass-card p-6 rounded-xl flex items-start gap-4 transform transition-transform hover:scale-[1.02]">
-                        <div class="bg-primary/40 p-2 rounded-lg">
-                            <span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">verified_user</span>
-                        </div>
-                        <div>
-                            <h3 class="text-white font-bold font-headline mb-1">Cryptographic Verification</h3>
-                            <p class="text-on-primary-container/80 text-sm leading-snug">Immutable proof of your professional journey powered by secure encryption.</p>
-                        </div>
+                <div class="glass-card p-6 rounded-xl flex items-center gap-5 transition-transform hover:scale-[1.02] duration-300">
+                    <div class="bg-primary p-3 rounded-lg shadow-inner">
+                        <span class="material-symbols-outlined text-primary-fixed" data-icon="encrypted">encrypted</span>
                     </div>
-
-                    <div class="glass-card p-6 rounded-xl flex items-start gap-4 transform transition-transform hover:scale-[1.02]">
-                        <div class="bg-primary/40 p-2 rounded-lg">
-                            <span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">security</span>
-                        </div>
-                        <div>
-                            <h3 class="text-white font-bold font-headline mb-1">Enterprise-Grade Security</h3>
-                            <p class="text-on-primary-container/80 text-sm leading-snug">Institutional protection for your most sensitive professional data.</p>
-                        </div>
+                    <div>
+                        <h3 class="font-headline font-bold text-on-primary text-lg">Cryptographic Verification</h3>
+                        <p class="text-on-primary-container text-sm opacity-80">Blockchain-anchored proof of every professional milestone.</p>
                     </div>
                 </div>
             </div>
 
-            <div class="relative z-10 mt-12">
-                <p class="text-on-primary-container/60 text-[10px] tracking-[0.2em] uppercase font-bold">
-                    System Node: Verified-Mainnet-01
-                </p>
+            <div class="relative z-10 mt-12 flex gap-4">
             </div>
         </section>
 
-        <section class="w-full md:w-7/12 lg:w-8/12 bg-surface-container-lowest p-8 md:p-16 lg:p-24 flex items-center justify-center">
+        <section class="flex-1 bg-surface flex items-center justify-center p-8 md:p-16 lg:p-24">
             <div class="w-full max-w-xl">
                 <header class="mb-10">
                     <h2 class="font-headline text-3xl font-extrabold text-on-surface tracking-tight mb-2">Create Your Profile</h2>
