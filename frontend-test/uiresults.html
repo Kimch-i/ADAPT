@@ -15,7 +15,7 @@
             "inverse-primary": "#8ad3d2",
             "primary-fixed-dim": "#8ad3d2",
             "tertiary-container": "#7d4726",
-            "background": "#f9f9f9",
+            "background": "#E4E9ED",
             "inverse-surface": "#2e3131",
             "on-secondary-fixed-variant": "#324b4b",
             "surface-container-low": "#f3f4f3",
@@ -67,6 +67,30 @@
         },
       },
     }
+
+    function switchTab(tabId) {
+      // 1. Hide all content sections
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.add('hidden');
+      });
+
+      // 2. Show the selected content section
+      const targetContent = document.getElementById('content-' + tabId);
+      if (targetContent) targetContent.classList.remove('hidden');
+
+      // 3. Reset all button styles to "Inactive"
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        // Remove Active styles
+        btn.classList.remove('bg-primary', 'text-on-primary', 'font-bold', 'shadow-sm');
+        // Add Inactive styles
+        btn.classList.add('text-outline', 'font-semibold', 'hover:bg-surface-container-high', 'hover:text-on-surface');
+      });
+
+      // 4. Apply "Active" styles to the clicked button
+      const activeBtn = document.getElementById('tab-' + tabId);
+      activeBtn.classList.add('bg-primary', 'text-on-primary', 'font-bold', 'shadow-sm');
+      activeBtn.classList.remove('text-outline', 'font-semibold', 'hover:bg-surface-container-high', 'hover:text-on-surface');
+    }
   </script>
   <style>
     .material-symbols-outlined {
@@ -95,15 +119,15 @@
                 <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
                 <span>Dashboard</span>
             </a>
-            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-teal-900 transition-all hover:translate-x-1 duration-200" href="#">
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-teal-900 transition-all hover:translate-x-1 duration-200" href="verificationsystem.html">
                 <span class="material-symbols-outlined" data-icon="cloud_upload">cloud_upload</span>
                 <span>Upload</span>
             </a>
-            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-teal-900 transition-all hover:translate-x-1 duration-200" href="#">
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-teal-900 transition-all hover:translate-x-1 duration-200" href="uiassessment.html">
                 <span class="material-symbols-outlined" data-icon="assignment_turned_in">assignment_turned_in</span>
                 <span>Assessments</span>
             </a>
-            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-white dark:text-slate-400 bg-teal-900 hover:bg-teal-900 hover:text-white dark:hover:bg-teal-900 transition-all translate-x-1 hover:translate-x-1 duration-200" href="#">
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-white dark:text-slate-400 bg-teal-900 hover:bg-teal-900 hover:text-white dark:hover:bg-teal-900 transition-all translate-x-1 hover:translate-x-1 duration-200" href="uiresults.html">
                 <span class="material-symbols-outlined" data-icon="bar_chart">bar_chart</span>
                 <span>Results</span>
             </a>
@@ -125,7 +149,7 @@
     </aside>
 
   <main class="ml-72 flex-1 flex flex-col min-h-screen">
-    <header class="sticky top-0 z-40 w-full flex justify-between items-center px-10 h-20 bg-surface/80 backdrop-blur-md">
+    <!-- <header class="sticky top-0 z-40 w-full flex justify-between items-center px-10 h-20 bg-surface/80 backdrop-blur-md">
       <div class="flex items-center bg-surface-container-high rounded-full px-4 py-2 w-96 group transition-all duration-300 focus-within:bg-surface-container-lowest focus-within:ring-1 focus-within:ring-primary/20">
         <span class="material-symbols-outlined text-outline group-focus-within:text-primary transition-colors" data-icon="search">search</span>
         <input class="bg-transparent border-none focus:ring-0 text-sm w-full ml-2 text-on-surface font-body" placeholder="Search documentation or assessments..." type="text" />
@@ -144,7 +168,7 @@
           <img alt="User profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD98_Wcuqk4be3Pwn_wS5GFeDw0bzlO1Ccg_IyqtF0A-KrmXRBmaVquSuBo9BQrlHP7iOKfz9JudDW_zSwAIVkhwEmdYLjPWUyAMadmJaka0xYVEgSNhRwXsbGStUz2nQ89yjsqZr8O_lMWl9qcA4N7avIohC3g4Le9egcxHQ_agjKyL9lvjvxESfn0eDKYEjO8wPwaXjVkKhTY1Bs2FSKhNvhX88uX3TLk7R56naOEYTAHXYjgsPzuXzWaYftwvMWcD7vLMF430XM" />
         </div>
       </div>
-    </header>
+    </header> -->
 
     <div class="p-8 space-y-8">
       <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -167,205 +191,564 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-primary text-on-primary p-8 rounded-xl flex flex-col justify-between relative overflow-hidden group">
-          <div class="absolute -right-4 -top-4 w-24 h-24 bg-primary-container rounded-full opacity-20 group-hover:scale-150 transition-transform duration-500"></div>
-          <span class="text-xs font-bold tracking-widest opacity-80">OVERALL SCORE</span>
-          <div class="flex items-baseline gap-2 mt-4">
-            <span class="text-6xl font-black font-headline tracking-tighter">85.5</span>
-            <span class="text-2xl font-bold opacity-60">%</span>
-          </div>
-          <div class="mt-4 flex items-center gap-2 text-sm">
-            <span class="bg-primary-container text-on-primary-container px-2 py-0.5 rounded text-[10px] font-bold">+2.4%</span>
-            <span class="opacity-70">vs median candidates</span>
-          </div>
-        </div>
-        <div class="bg-surface-container-lowest border border-surface-container-highest p-8 rounded-xl flex flex-col justify-between shadow-sm">
-          <span class="text-xs font-bold tracking-widest text-outline">JOB FIT SCORE</span>
-          <div class="flex items-baseline gap-2 mt-4">
-            <span class="text-6xl font-black font-headline tracking-tighter text-primary">88.5</span>
-            <span class="text-2xl font-bold text-outline">%</span>
-          </div>
-          <div class="mt-4 flex items-center gap-2 text-sm">
-            <div class="h-1.5 flex-1 bg-surface-container-high rounded-full overflow-hidden">
-              <div class="h-full bg-primary rounded-full w-[88.5%]"></div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <div class="relative overflow-hidden bg-gradient-to-br from-[#22c55e] to-[#15803d] p-7 rounded-2xl shadow-sm text-white group">
+          <div class="absolute -bottom-6 -left-6 w-24 h-24 bg-white/10 rounded-full group-hover:scale-110 transition-transform duration-500"></div>
+          
+          <div class="relative z-10">
+            <p class="text-[10px] font-black uppercase tracking-[0.2em] opacity-80 mb-2">Overall Score</p>
+            <div class="flex items-baseline gap-1">
+              <h2 class="text-5xl font-headline font-black tracking-tighter">85.5%</h2>
             </div>
-            <span class="font-bold text-primary">Strong Match</span>
+            <p class="text-xs font-medium mt-2 opacity-90">17 of 20 correct</p>
           </div>
         </div>
-        <div class="bg-surface-container-lowest border border-surface-container-highest p-8 rounded-xl flex flex-col justify-between shadow-sm">
-          <span class="text-xs font-bold tracking-widest text-outline">TIME TAKEN</span>
-          <div class="flex items-baseline gap-2 mt-4">
-            <span class="text-6xl font-black font-headline tracking-tighter text-on-surface">45</span>
-            <span class="text-2xl font-bold text-outline">min</span>
+
+        <div class="relative overflow-hidden bg-[#005f5f] p-7 rounded-2xl shadow-sm text-white group">
+          <div class="absolute -top-10 -right-10 w-32 h-32 bg-white/5 rounded-full group-hover:scale-110 transition-transform duration-500"></div>
+          
+          <div class="relative z-10">
+            <p class="text-[10px] font-black uppercase tracking-[0.2em] opacity-80 mb-2">Job Fit Score</p>
+            <h2 class="text-5xl font-headline font-black tracking-tighter">88.5%</h2>
+            <p class="text-xs font-medium mt-2 opacity-90">Strong match for this role</p>
           </div>
-          <div class="mt-4 flex items-center gap-2 text-sm text-on-surface-variant">
-            <span class="material-symbols-outlined text-sm">timer</span>
-            <span>15m faster than average</span>
+        </div>
+
+        <div class="bg-white p-7 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-center">
+          <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2">Time Taken</p>
+          <div class="flex items-baseline gap-2">
+            <h2 class="text-5xl font-headline font-black text-[#004545] tracking-tighter">45</h2>
+            <span class="text-slate-500 font-bold text-sm">minutes</span>
           </div>
         </div>
       </div>
 
-      <div class="bg-secondary-container/30 border-l-4 border-primary p-6 rounded-r-xl flex gap-4 items-start">
-        <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">info</span>
+      <div class="bg-[#eef8f8] border border-[#d1ebeb] p-5 rounded-2xl flex gap-5 items-center">
+        <div class="bg-[#004545] w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-[#004545]/20">
+          <span class="material-symbols-outlined text-white text-2xl" style="font-variation-settings: 'FILL' 1">target</span>
+        </div>
+        
+        <div class="flex-1">
+          <h3 class="font-headline font-black text-[#004545] text-sm mb-0.5">Job Fit Analysis</h3>
+          <p class="text-[13px] text-slate-600 leading-relaxed">
+            Strong match for Software Engineer role. Excellent JavaScript and React skills with minor areas for improvement in TypeScript and backend development.
+          </p>
+        </div>
+      </div>
+
+      <div class="flex w-full bg-surface-container-low p-1.5 rounded-xl border border-outline-variant/30 gap-2 overflow-x-auto">
+        <button id="tab-skill-verification" onclick="switchTab('skill-verification')" 
+          class="tab-btn flex-1 py-2.5 px-4 rounded-lg bg-primary text-on-primary font-bold text-sm whitespace-nowrap transition-all duration-200 shadow-sm">
+          Skill Verification
+        </button>
+        
+        <button id="tab-skill-gaps" onclick="switchTab('skill-gaps')" 
+          class="tab-btn flex-1 py-2.5 px-4 rounded-lg text-outline font-semibold text-sm whitespace-nowrap hover:bg-surface-container-high hover:text-on-surface transition-all duration-200">
+          Skill Gaps
+        </button>
+        
+        <button id="tab-learning-path" onclick="switchTab('learning-path')" 
+          class="tab-btn flex-1 py-2.5 px-4 rounded-lg text-outline font-semibold text-sm whitespace-nowrap hover:bg-surface-container-high hover:text-on-surface transition-all duration-200">
+          Learning Path
+        </button>
+        
+        <button id="tab-job-reco" onclick="switchTab('job-reco')" 
+          class="tab-btn flex-1 py-2.5 px-4 rounded-lg text-outline font-semibold text-sm whitespace-nowrap hover:bg-surface-container-high hover:text-on-surface transition-all duration-200">
+          Job Recommendations
+        </button>
+      </div>
+
+      <div id="content-skill-verification" class="tab-content grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div class="lg:col-span-12 p-8 bg-surface-container-lowest rounded-xl border border-surface-container-highest">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div class="lg:col-span-5 bg-surface-container-lowest rounded-xl p-8 border border-surface-container-highest flex flex-col">
+              <div class="flex justify-between items-center mb-8">
+                <h3 class="font-bold text-xl">Skills Comparison</h3>
+                <span class="material-symbols-outlined text-outline cursor-help">help</span>
+              </div>
+              <div class="flex-1 flex items-center justify-center relative min-h-[300px] radar-grid rounded-full border border-outline-variant/20">
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <div class="w-48 h-48 border border-outline-variant rounded-full opacity-20"></div>
+                  <div class="w-32 h-32 border border-outline-variant rounded-full opacity-20 absolute"></div>
+                  <div class="w-16 h-16 border border-outline-variant rounded-full opacity-20 absolute"></div>
+                </div>
+                <div class="relative z-10 w-full h-full flex items-center justify-center">
+                  <svg class="w-full h-full transform -rotate-18" viewbox="0 0 100 100">
+                    <polygon fill="none" points="50,10 85,35 75,85 25,85 15,35" stroke="#6f7979" stroke-dasharray="2,2" stroke-width="1"></polygon>
+                    <polygon fill="rgba(0, 69, 69, 0.2)" points="50,20 80,40 70,75 30,75 20,40" stroke="#004545" stroke-width="2"></polygon>
+                  </svg>
+                </div>
+                <span class="absolute top-4 left-1/2 -translate-x-1/2 text-[10px] font-bold text-outline">Frontend</span>
+                <span class="absolute right-4 top-1/3 text-[10px] font-bold text-outline">Backend</span>
+                <span class="absolute bottom-4 right-1/4 text-[10px] font-bold text-outline">DB</span>
+                <span class="absolute bottom-4 left-1/4 text-[10px] font-bold text-outline">DevOps</span>
+                <span class="absolute left-4 top-1/3 text-[10px] font-bold text-outline">Architecture</span>
+              </div>
+              <div class="mt-8 space-y-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-3 h-3 rounded-sm border border-outline border-dashed"></div>
+                  <span class="text-sm text-on-surface-variant font-medium">Claimed Proficiency</span>
+                </div>
+                <div class="flex items-center gap-3">
+                  <div class="w-3 h-3 rounded-sm bg-primary/20 border border-primary"></div>
+                  <span class="text-sm text-on-surface-variant font-medium">Verified Performance</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="lg:col-span-7 space-y-4">
+              <h3 class="font-bold text-xl mb-4">Detailed Skill Breakdown</h3>
+              <div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-5 shadow-sm">
+                <div class="flex items-center justify-between mb-4">
+                  <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 bg-yellow-100 flex items-center justify-center rounded-lg">
+                      <span class="font-black text-yellow-700">JS</span>
+                    </div>
+                    <div>
+                      <h4 class="font-bold text-on-surface">JavaScript</h4>
+                      <span class="text-xs text-outline font-semibold">ES6+, Asynchronous, Engines</span>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span class="bg-secondary-fixed text-on-secondary-fixed text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Valid</span>
+                    <span class="material-symbols-outlined text-outline">expand_more</span>
+                  </div>
+                </div>
+                <div class="space-y-4">
+                  <div class="flex justify-between text-xs font-bold text-outline uppercase tracking-widest">
+                    <span>Proficiency Level</span>
+                    <span class="text-primary">Advanced (92%)</span>
+                  </div>
+                  <div class="h-2 bg-surface-container-high rounded-full overflow-hidden">
+                    <div class="h-full bg-primary rounded-full w-[92%]"></div>
+                  </div>
+                  <div class="grid grid-cols-3 gap-4 pt-2 border-t border-surface-container-high">
+                    <div class="flex flex-col">
+                      <span class="text-[10px] text-outline font-bold uppercase">Verified Exp.</span>
+                      <span class="font-bold text-on-surface">6.2 Years</span>
+                    </div>
+                    <div class="flex flex-col">
+                      <span class="text-[10px] text-outline font-bold uppercase">Claimed Exp.</span>
+                      <span class="font-bold text-on-surface">7.0 Years</span>
+                    </div>
+                    <div class="flex flex-col">
+                      <span class="text-[10px] text-outline font-bold uppercase">Confidence</span>
+                      <span class="font-bold text-primary">98%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-5 shadow-sm">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 bg-teal-100 flex items-center justify-center rounded-lg">
+                      <span class="font-black text-teal-700">R</span>
+                    </div>
+                    <div>
+                      <h4 class="font-bold text-on-surface">React</h4>
+                      <span class="text-xs text-outline font-semibold">Hooks, Redux, Performance</span>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span class="bg-secondary-fixed text-on-secondary-fixed text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Valid</span>
+                    <span class="material-symbols-outlined text-outline">expand_more</span>
+                  </div>
+                </div>
+              </div>
+              <div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-5 shadow-sm">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 bg-blue-100 flex items-center justify-center rounded-lg">
+                      <span class="font-black text-blue-700">TS</span>
+                    </div>
+                    <div>
+                      <h4 class="font-bold text-on-surface">TypeScript</h4>
+                      <span class="text-xs text-outline font-semibold">Generics, Advanced Types</span>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span class="bg-secondary-fixed text-on-secondary-fixed text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Valid</span>
+                    <span class="material-symbols-outlined text-outline">expand_more</span>
+                  </div>
+                </div>
+              </div>
+              <div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-5 shadow-sm">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 bg-green-100 flex items-center justify-center rounded-lg">
+                      <span class="font-black text-green-700">N</span>
+                    </div>
+                    <div>
+                      <h4 class="font-bold text-on-surface">Node.js</h4>
+                      <span class="text-xs text-outline font-semibold">Event Loop, Streams</span>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span class="bg-tertiary-fixed text-on-tertiary-fixed-variant text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Needs Improvement</span>
+                    <span class="material-symbols-outlined text-outline">expand_more</span>
+                  </div>
+                </div>
+              </div>
+              <div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-5 shadow-sm">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 bg-purple-100 flex items-center justify-center rounded-lg">
+                      <span class="font-black text-purple-700">DB</span>
+                    </div>
+                    <div>
+                      <h4 class="font-bold text-on-surface">SQL</h4>
+                      <span class="text-xs text-outline font-semibold">PostgreSQL, Indexing</span>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span class="bg-secondary-fixed text-on-secondary-fixed text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Valid</span>
+                    <span class="material-symbols-outlined text-outline">expand_more</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="content-skill-gaps" class="tab-content hidden animate-in fade-in duration-300">
+  <div class="mb-8">
+    <h2 class="text-2xl font-headline font-bold text-on-surface">Skill Gap Analysis</h2>
+    <p class="text-on-surface-variant">Prioritized roadmap to bridge the gap between current proficiency and target levels.</p>
+  </div>
+
+  <div class="space-y-4">
+    <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow group border border-surface-container-highest">
+      <div class="flex flex-wrap items-center justify-between gap-6">
+        <div class="flex items-center gap-5 min-w-[240px]">
+          <div class="w-12 h-12 rounded-lg bg-surface-container-high flex items-center justify-center group-hover:bg-primary-container/10 transition-colors">
+            <span class="material-symbols-outlined text-primary" data-icon="terminal">terminal</span>
+          </div>
+          <div>
+            <h4 class="font-headline font-bold text-lg text-on-surface">TypeScript</h4>
+            <div class="flex items-center gap-2 mt-1">
+              <span class="text-xs font-bold px-2 py-0.5 bg-secondary-fixed text-on-secondary-fixed rounded-full uppercase">High Priority</span>
+              <span class="text-xs text-on-surface-variant">4 weeks est.</span>
+            </div>
+          </div>
+        </div>
+        <div class="flex-1 min-w-[300px]">
+          <div class="flex justify-between text-xs font-bold mb-2 uppercase tracking-tighter">
+            <span class="text-on-surface-variant">Intermediate</span>
+            <span class="text-primary">Advanced (Target)</span>
+          </div>
+          <div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+            <div class="h-full bg-primary rounded-full" style="width: 75%;"></div>
+          </div>
+        </div>
+        <button class="flex items-center gap-2 text-primary font-bold text-sm hover:underline">
+          View Materials
+          <span class="material-symbols-outlined text-sm">arrow_forward</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow group border border-surface-container-highest">
+      <div class="flex flex-wrap items-center justify-between gap-6">
+        <div class="flex items-center gap-5 min-w-[240px]">
+          <div class="w-12 h-12 rounded-lg bg-surface-container-high flex items-center justify-center group-hover:bg-primary-container/10 transition-colors">
+            <span class="material-symbols-outlined text-primary" data-icon="account_tree">account_tree</span>
+          </div>
+          <div>
+            <h4 class="font-headline font-bold text-lg text-on-surface">System Design</h4>
+            <div class="flex items-center gap-2 mt-1">
+              <span class="text-xs font-bold px-2 py-0.5 bg-secondary-fixed text-on-secondary-fixed rounded-full uppercase">High Priority</span>
+              <span class="text-xs text-on-surface-variant">8 weeks est.</span>
+            </div>
+          </div>
+        </div>
+        <div class="flex-1 min-w-[300px]">
+          <div class="flex justify-between text-xs font-bold mb-2 uppercase tracking-tighter">
+            <span class="text-on-surface-variant">Junior</span>
+            <span class="text-primary">Advanced (Target)</span>
+          </div>
+          <div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+            <div class="h-full bg-primary rounded-full" style="width: 40%;"></div>
+          </div>
+        </div>
+        <button class="flex items-center gap-2 text-primary font-bold text-sm hover:underline">
+          View Materials
+          <span class="material-symbols-outlined text-sm">arrow_forward</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow group border border-surface-container-highest">
+      <div class="flex flex-wrap items-center justify-between gap-6">
+        <div class="flex items-center gap-5 min-w-[240px]">
+          <div class="w-12 h-12 rounded-lg bg-surface-container-high flex items-center justify-center group-hover:bg-primary-container/10 transition-colors">
+            <span class="material-symbols-outlined text-primary" data-icon="developer_board">developer_board</span>
+          </div>
+          <div>
+            <h4 class="font-headline font-bold text-lg text-on-surface">Docker</h4>
+            <div class="flex items-center gap-2 mt-1">
+              <span class="text-xs font-bold px-2 py-0.5 bg-surface-container-highest text-on-surface-variant rounded-full uppercase">Medium Priority</span>
+              <span class="text-xs text-on-surface-variant">2 weeks est.</span>
+            </div>
+          </div>
+        </div>
+        <div class="flex-1 min-w-[300px]">
+          <div class="flex justify-between text-xs font-bold mb-2 uppercase tracking-tighter">
+            <span class="text-on-surface-variant">Intermediate</span>
+            <span class="text-primary">Expert (Target)</span>
+          </div>
+          <div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+            <div class="h-full bg-primary rounded-full" style="width: 60%;"></div>
+          </div>
+        </div>
+        <button class="flex items-center gap-2 text-primary font-bold text-sm hover:underline">
+          View Materials
+          <span class="material-symbols-outlined text-sm">arrow_forward</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow group border border-surface-container-highest">
+      <div class="flex flex-wrap items-center justify-between gap-6">
+          <div class="flex items-center gap-5 min-w-[240px]">
+            <div class="w-12 h-12 rounded-lg bg-surface-container-high flex items-center justify-center group-hover:bg-primary-container/10 transition-colors">
+              <span class="material-symbols-outlined text-primary" data-icon="cloud">cloud</span>
+            </div>
+            <div>
+              <h4 class="font-headline font-bold text-lg text-on-surface">AWS</h4>
+              <div class="flex items-center gap-2 mt-1">
+                <span class="text-xs font-bold px-2 py-0.5 bg-secondary-fixed text-on-secondary-fixed rounded-full uppercase">High Priority</span>
+                <span class="text-xs text-on-surface-variant">12 weeks est.</span>
+              </div>
+            </div>
+          </div>
+            <div class="flex-1 min-w-[300px]">
+              <div class="flex justify-between text-xs font-bold mb-2 uppercase tracking-tighter">
+                <span class="text-on-surface-variant">None</span>
+                <span class="text-primary">Practitioner (Target)</span>
+              </div>
+              <div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+                <div class="h-full bg-primary rounded-full" style="width: 15%;"></div>
+              </div>
+            </div>
+            <button class="flex items-center gap-2 text-primary font-bold text-sm hover:underline">
+              View Materials
+              <span class="material-symbols-outlined text-sm">arrow_forward</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<div id="content-learning-path" class="tab-content hidden animate-in fade-in duration-300">
+  <div class="mb-8">
+    <div class="flex items-center gap-2 mb-1">
+      <span class="material-symbols-outlined text-primary text-xl">school</span>
+      <h2 class="text-2xl font-headline font-bold text-on-surface">Personalized Learning Roadmap</h2>
+    </div>
+    <p class="text-on-surface-variant font-medium">Step-by-step plan to bridge your skill gaps (12 weeks)</p>
+  </div>
+
+  <div class="space-y-6">
+    <div class="bg-surface-container-lowest border border-surface-container-highest rounded-2xl p-6 shadow-sm">
+      <div class="flex items-start gap-4 mb-6">
+        <div class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold shrink-0">1</div>
         <div>
-          <h3 class="font-bold text-primary text-lg">Job Fit Analysis</h3>
-          <p class="text-on-secondary-container mt-1 max-w-4xl">Candidate demonstrates exceptional system architecture knowledge and React performance optimization. Core strengths align with Senior Level requirements, specifically in scalable frontend patterns and technical leadership potential.</p>
+          <h3 class="font-headline font-bold text-xl text-on-surface">TypeScript</h3>
+          <p class="text-xs font-semibold text-outline uppercase tracking-wider mt-1">Weeks 1-6 • 6 weeks • Intermediate → Advanced</p>
         </div>
       </div>
 
-      <div class="flex gap-8 border-b border-outline-variant pt-4 overflow-x-auto">
-        <button class="pb-4 border-b-2 border-primary text-primary font-bold whitespace-nowrap">Skill Verification</button>
-        <button class="pb-4 border-b-2 border-transparent text-outline font-semibold hover:text-on-surface transition-colors whitespace-nowrap">Skill Gaps</button>
-        <button class="pb-4 border-b-2 border-transparent text-outline font-semibold hover:text-on-surface transition-colors whitespace-nowrap">Learning Path</button>
-        <button class="pb-4 border-b-2 border-transparent text-outline font-semibold hover:text-on-surface transition-colors whitespace-nowrap">Job Recommendations</button>
-      </div>
+      <div class="space-y-3">
+        <p class="text-sm font-bold text-on-surface-variant mb-3">Recommended Resources:</p>
+        
+        <div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl border border-outline-variant/20 hover:border-primary/30 transition-colors group">
+          <div class="flex items-center gap-4">
+            <span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">open_in_new</span>
+            <div>
+              <h4 class="text-sm font-bold text-on-surface">TypeScript: The Complete Developer's Guide</h4>
+              <p class="text-xs text-outline">Udemy • 24h • $49.99 • ★ 4.7</p>
+            </div>
+          </div>
+          <button class="text-xs font-bold text-primary hover:underline">View</button>
+        </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <div class="lg:col-span-5 bg-surface-container-lowest rounded-xl p-8 border border-surface-container-highest flex flex-col">
-          <div class="flex justify-between items-center mb-8">
-            <h3 class="font-bold text-xl">Skills Comparison</h3>
-            <span class="material-symbols-outlined text-outline cursor-help">help</span>
+        <div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl border border-outline-variant/20 hover:border-primary/30 transition-colors group">
+          <div class="flex items-center gap-4">
+            <span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">open_in_new</span>
+            <div>
+              <h4 class="text-sm font-bold text-on-surface">TypeScript Advanced Patterns</h4>
+              <p class="text-xs text-outline">YouTube • 8h • Free • ★ 4.6</p>
+            </div>
           </div>
-          <div class="flex-1 flex items-center justify-center relative min-h-[300px] radar-grid rounded-full border border-outline-variant/20">
-            <div class="absolute inset-0 flex items-center justify-center">
-              <div class="w-48 h-48 border border-outline-variant rounded-full opacity-20"></div>
-              <div class="w-32 h-32 border border-outline-variant rounded-full opacity-20 absolute"></div>
-              <div class="w-16 h-16 border border-outline-variant rounded-full opacity-20 absolute"></div>
-            </div>
-            <div class="relative z-10 w-full h-full flex items-center justify-center">
-              <svg class="w-full h-full transform -rotate-18" viewbox="0 0 100 100">
-                <polygon fill="none" points="50,10 85,35 75,85 25,85 15,35" stroke="#6f7979" stroke-dasharray="2,2" stroke-width="1"></polygon>
-                <polygon fill="rgba(0, 69, 69, 0.2)" points="50,20 80,40 70,75 30,75 20,40" stroke="#004545" stroke-width="2"></polygon>
-              </svg>
-            </div>
-            <span class="absolute top-4 left-1/2 -translate-x-1/2 text-[10px] font-bold text-outline">Frontend</span>
-            <span class="absolute right-4 top-1/3 text-[10px] font-bold text-outline">Backend</span>
-            <span class="absolute bottom-4 right-1/4 text-[10px] font-bold text-outline">DB</span>
-            <span class="absolute bottom-4 left-1/4 text-[10px] font-bold text-outline">DevOps</span>
-            <span class="absolute left-4 top-1/3 text-[10px] font-bold text-outline">Architecture</span>
+          <button class="text-xs font-bold text-primary hover:underline">View</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-surface-container-lowest border border-surface-container-highest rounded-2xl p-6 shadow-sm">
+      <div class="flex items-start gap-4 mb-6">
+        <div class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold shrink-0">2</div>
+          <div>
+            <h3 class="font-headline font-bold text-xl text-on-surface">System Design</h3>
+            <p class="text-xs font-semibold text-outline uppercase tracking-wider mt-1">Weeks 7-14 • 8 weeks • Beginner → Intermediate</p>
           </div>
-          <div class="mt-8 space-y-3">
-            <div class="flex items-center gap-3">
-              <div class="w-3 h-3 rounded-sm border border-outline border-dashed"></div>
-              <span class="text-sm text-on-surface-variant font-medium">Claimed Proficiency</span>
-            </div>
-            <div class="flex items-center gap-3">
-              <div class="w-3 h-3 rounded-sm bg-primary/20 border border-primary"></div>
-              <span class="text-sm text-on-surface-variant font-medium">Verified Performance</span>
+        </div>
+
+          <div class="space-y-3">
+            <p class="text-sm font-bold text-on-surface-variant mb-3">Recommended Resources:</p>
+            
+            <div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl border border-outline-variant/20 hover:border-primary/30 transition-colors group">
+              <div class="flex items-center gap-4">
+                <span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">open_in_new</span>
+                <div>
+                  <h4 class="text-sm font-bold text-on-surface">System Design Interview Course</h4>
+                  <p class="text-xs text-outline">Educative • 40h • $79.99 • ★ 4.9</p>
+                </div>
+              </div>
+              <button class="text-xs font-bold text-primary hover:underline">View</button>
             </div>
           </div>
         </div>
 
-        <div class="lg:col-span-7 space-y-4">
-          <h3 class="font-bold text-xl mb-4">Detailed Skill Breakdown</h3>
-          <div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-5 shadow-sm">
-            <div class="flex items-center justify-between mb-4">
-              <div class="flex items-center gap-4">
-                <div class="w-10 h-10 bg-yellow-100 flex items-center justify-center rounded-lg">
-                  <span class="font-black text-yellow-700">JS</span>
-                </div>
-                <div>
-                  <h4 class="font-bold text-on-surface">JavaScript</h4>
-                  <span class="text-xs text-outline font-semibold">ES6+, Asynchronous, Engines</span>
-                </div>
-              </div>
-              <div class="flex items-center gap-3">
-                <span class="bg-secondary-fixed text-on-secondary-fixed text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Valid</span>
-                <span class="material-symbols-outlined text-outline">expand_more</span>
-              </div>
-            </div>
-            <div class="space-y-4">
-              <div class="flex justify-between text-xs font-bold text-outline uppercase tracking-widest">
-                <span>Proficiency Level</span>
-                <span class="text-primary">Advanced (92%)</span>
-              </div>
-              <div class="h-2 bg-surface-container-high rounded-full overflow-hidden">
-                <div class="h-full bg-primary rounded-full w-[92%]"></div>
-              </div>
-              <div class="grid grid-cols-3 gap-4 pt-2 border-t border-surface-container-high">
-                <div class="flex flex-col">
-                  <span class="text-[10px] text-outline font-bold uppercase">Verified Exp.</span>
-                  <span class="font-bold text-on-surface">6.2 Years</span>
-                </div>
-                <div class="flex flex-col">
-                  <span class="text-[10px] text-outline font-bold uppercase">Claimed Exp.</span>
-                  <span class="font-bold text-on-surface">7.0 Years</span>
-                </div>
-                <div class="flex flex-col">
-                  <span class="text-[10px] text-outline font-bold uppercase">Confidence</span>
-                  <span class="font-bold text-primary">98%</span>
-                </div>
+        <div class="bg-primary/5 border border-primary/10 rounded-xl p-4 flex items-start gap-3">
+          <span class="material-symbols-outlined text-primary text-xl">trending_up</span>
+          <p class="text-sm text-on-surface-variant leading-relaxed">
+            <strong class="text-primary">Success Tip:</strong> Dedicate 10-15 hours per week to follow this learning path. Complete practical projects after each phase to reinforce your knowledge.
+          </p>
+        </div>
+      </div>
+    </div>
+
+      <div id="content-job-reco" class="tab-content hidden animate-in fade-in duration-300">
+  <div class="mb-8">
+    <div class="flex items-center gap-2 mb-1">
+      <span class="material-symbols-outlined text-primary text-xl">work</span>
+      <h2 class="text-2xl font-headline font-bold text-on-surface">Job Recommendations</h2>
+    </div>
+    <p class="text-on-surface-variant font-medium">Roles that match your verified skills and experience</p>
+  </div>
+
+  <div class="space-y-6">
+    <div class="bg-surface-container-lowest border border-surface-container-highest rounded-2xl p-6 shadow-sm">
+      <div class="flex justify-between items-start mb-4">
+        <div>
+          <div class="flex items-center gap-3 mb-1">
+            <h3 class="font-headline font-bold text-xl text-on-surface">Frontend Developer</h3>
+            <span class="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">92.5% match</span>
+          </div>
+          <p class="text-xs text-outline font-medium">Technology • San Francisco, CA • Remote Available</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-8 mb-6">
+        <div>
+          <p class="text-[10px] font-bold text-outline uppercase tracking-wider mb-2">Salary Range</p>
+          <p class="font-bold text-on-surface">₱110,000 - ₱150,000</p>
+        </div>
+        <div>
+          <p class="text-[10px] font-bold text-outline uppercase tracking-wider mb-2">Required Skills</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="text-[10px] font-bold border border-outline-variant px-2 py-1 rounded bg-surface">JavaScript</span>
+            <span class="text-[10px] font-bold border border-outline-variant px-2 py-1 rounded bg-surface">React</span>
+            <span class="text-[10px] font-bold border border-outline-variant px-2 py-1 rounded bg-surface">HTML</span>
+            <span class="text-[10px] font-bold border border-outline-variant px-2 py-1 rounded bg-surface">CSS</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="text-sm text-on-surface-variant leading-relaxed mb-6">Your strong JavaScript and React skills make you an excellent fit for frontend roles. Your verified expertise aligns perfectly with typical requirements.</p>
+
+      <div class="flex gap-3">
+        <button class="px-4 py-2 text-xs font-bold border border-outline rounded-lg hover:bg-surface-container-low transition-colors">View Similar Jobs</button>
+        <button class="px-4 py-2 text-xs font-bold bg-black text-white rounded-lg flex items-center gap-2 hover:bg-slate-800 transition-colors">
+          Apply Now <span class="material-symbols-outlined text-xs">open_in_new</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="bg-surface-container-lowest border border-surface-container-highest rounded-2xl p-6 shadow-sm">
+      <div class="flex justify-between items-start mb-4">
+        <div>
+          <div class="flex items-center gap-3 mb-1">
+            <h3 class="font-headline font-bold text-xl text-on-surface">Full Stack Developer</h3>
+            <span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">78% match</span>
+          </div>
+          <p class="text-xs text-outline font-medium">Technology • San Francisco, CA • Remote Available</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-8 mb-4">
+        <div>
+          <p class="text-[10px] font-bold text-outline uppercase tracking-wider mb-2">Salary Range</p>
+          <p class="font-bold text-on-surface">₱120,000 - ₱170,000</p>
+        </div>
+        <div>
+          <p class="text-[10px] font-bold text-outline uppercase tracking-wider mb-2">Required Skills</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="text-[10px] font-bold border border-outline-variant px-2 py-1 rounded bg-surface">JavaScript</span>
+            <span class="text-[10px] font-bold border border-outline-variant px-2 py-1 rounded bg-surface">React</span>
+            <span class="text-[10px] font-bold border border-outline-variant px-2 py-1 rounded bg-surface">Node.js</span>
+            <span class="text-[10px] font-bold border border-outline-variant px-2 py-1 rounded bg-surface">SQL</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-yellow-50 border border-yellow-100 rounded-lg p-3 flex items-center gap-3 mb-4">
+        <span class="material-symbols-outlined text-yellow-600 text-sm">info</span>
+        <p class="text-xs font-bold text-yellow-800">Skills to develop: <span class="font-normal">Docker (advanced), AWS</span></p>
+      </div>
+
+      <p class="text-sm text-on-surface-variant leading-relaxed mb-6">Good frontend skills verified. Strengthening backend knowledge (Docker, AWS) would make you highly competitive for full-stack positions.</p>
+
+      <div class="flex gap-3">
+        <button class="px-4 py-2 text-xs font-bold border border-outline rounded-lg hover:bg-surface-container-low transition-colors">View Similar Jobs</button>
+        <button class="px-4 py-2 text-xs font-bold bg-black text-white rounded-lg flex items-center gap-2 hover:bg-slate-800 transition-colors">
+          Apply Now <span class="material-symbols-outlined text-xs">open_in_new</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="bg-surface-container-lowest border border-surface-container-highest rounded-2xl p-6 shadow-sm">
+      <div class="flex justify-between items-start mb-4">
+        <div>
+          <div class="flex items-center gap-3 mb-1">
+            <h3 class="font-headline font-bold text-xl text-on-surface">Senior Frontend Engineer</h3>
+            <span class="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">85% match</span>
+          </div>
+          <p class="text-xs text-outline font-medium">Technology • Remote • Remote Available</p>
+        </div>
+      </div>
+
+        <div class="grid grid-cols-2 gap-8 mb-4">
+          <div>
+            <p class="text-[10px] font-bold text-outline uppercase tracking-wider mb-2">Salary Range</p>
+            <p class="font-bold text-on-surface">₱140,000 - ₱190,000</p>
+          </div>
+          <div>
+              <p class="text-[10px] font-bold text-outline uppercase tracking-wider mb-2">Required Skills</p>
+              <div class="flex flex-wrap gap-2">
+                <span class="text-[10px] font-bold border border-outline-variant px-2 py-1 rounded bg-surface">JavaScript</span>
+                <span class="text-[10px] font-bold border border-outline-variant px-2 py-1 rounded bg-surface">TypeScript</span>
+                <span class="text-[10px] font-bold border border-outline-variant px-2 py-1 rounded bg-surface">React</span>
+                <span class="text-[10px] font-bold border border-outline-variant px-2 py-1 rounded bg-surface">System Design</span>
               </div>
             </div>
           </div>
-          <div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-5 shadow-sm">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-4">
-                <div class="w-10 h-10 bg-teal-100 flex items-center justify-center rounded-lg">
-                  <span class="font-black text-teal-700">R</span>
-                </div>
-                <div>
-                  <h4 class="font-bold text-on-surface">React</h4>
-                  <span class="text-xs text-outline font-semibold">Hooks, Redux, Performance</span>
-                </div>
-              </div>
-              <div class="flex items-center gap-3">
-                <span class="bg-secondary-fixed text-on-secondary-fixed text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Valid</span>
-                <span class="material-symbols-outlined text-outline">expand_more</span>
-              </div>
-            </div>
+
+          <div class="bg-yellow-50 border border-yellow-100 rounded-lg p-3 flex items-center gap-3 mb-4">
+            <span class="material-symbols-outlined text-yellow-600 text-sm">info</span>
+            <p class="text-xs font-bold text-yellow-800">Skills to develop: <span class="font-normal">TypeScript (advanced), System Design</span></p>
           </div>
-          <div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-5 shadow-sm">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-4">
-                <div class="w-10 h-10 bg-blue-100 flex items-center justify-center rounded-lg">
-                  <span class="font-black text-blue-700">TS</span>
-                </div>
-                <div>
-                  <h4 class="font-bold text-on-surface">TypeScript</h4>
-                  <span class="text-xs text-outline font-semibold">Generics, Advanced Types</span>
-                </div>
-              </div>
-              <div class="flex items-center gap-3">
-                <span class="bg-secondary-fixed text-on-secondary-fixed text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Valid</span>
-                <span class="material-symbols-outlined text-outline">expand_more</span>
-              </div>
-            </div>
+
+          <p class="text-sm text-on-surface-variant leading-relaxed mb-6">Your experience level matches senior roles. Improving TypeScript and learning system design will significantly boost your candidacy.</p>
+
+          <div class="flex gap-3">
+            <button class="px-4 py-2 text-xs font-bold border border-outline rounded-lg hover:bg-surface-container-low transition-colors">View Similar Jobs</button>
+            <button class="px-4 py-2 text-xs font-bold bg-black text-white rounded-lg flex items-center gap-2 hover:bg-slate-800 transition-colors">
+                Apply Now <span class="material-symbols-outlined text-xs">open_in_new</span>
+            </button>
           </div>
-          <div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-5 shadow-sm">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-4">
-                <div class="w-10 h-10 bg-green-100 flex items-center justify-center rounded-lg">
-                  <span class="font-black text-green-700">N</span>
-                </div>
-                <div>
-                  <h4 class="font-bold text-on-surface">Node.js</h4>
-                  <span class="text-xs text-outline font-semibold">Event Loop, Streams</span>
-                </div>
-              </div>
-              <div class="flex items-center gap-3">
-                <span class="bg-tertiary-fixed text-on-tertiary-fixed-variant text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Needs Improvement</span>
-                <span class="material-symbols-outlined text-outline">expand_more</span>
-              </div>
-            </div>
-          </div>
-          <div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-5 shadow-sm">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-4">
-                <div class="w-10 h-10 bg-purple-100 flex items-center justify-center rounded-lg">
-                  <span class="font-black text-purple-700">DB</span>
-                </div>
-                <div>
-                  <h4 class="font-bold text-on-surface">SQL</h4>
-                  <span class="text-xs text-outline font-semibold">PostgreSQL, Indexing</span>
-                </div>
-              </div>
-              <div class="flex items-center gap-3">
-                <span class="bg-secondary-fixed text-on-secondary-fixed text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Valid</span>
-                <span class="material-symbols-outlined text-outline">expand_more</span>
-              </div>
-            </div>
           </div>
         </div>
       </div>
