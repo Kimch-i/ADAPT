@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assessment Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            color: black;
+            background-color: white;
+        }
+
+        .container {
+            max-width: 600px;
+            margin-bottom: 20px;
+        }
+
+        .input-field {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 5px;
+        }
+
+        .btn-generate {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        #status-area {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .result-container {
+            max-width: 800px;
+            margin-top: 20px;
+            border-top: 2px solid black;
+            padding-top: 10px;
+        }
+
+        pre {
+            background-color: #eee;
+            padding: 10px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h1>AI Assessment Generator</h1>
+            <a href="/results"
+                style="padding: 8px 16px; background: #000; color: #fff; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 14px;">View
+                My Results</a>
+        </div>
+        <p>Ready to evaluate incoming profiles? Enter the extracted candidate variables below to instantly generate a
+            comprehensive assessment report.</p>
+
+        <input type="text" id="jobTitle" class="input-field"
+            placeholder="Job Title / Experience / Role from resume (e.g. Frontend Developer)" />
+        <input type="text" id="skills" class="input-field"
+            placeholder="Skills from resume (comma separated, e.g. React, JS)" />
+
+        <button class="btn-generate" id="generateBtn">
+            Generate Assessment
+        </button>
+
+        <div id="status-area"></div>
+    </div>
+
+    <!-- Result Area to Display Assessment -->
+    <div class="result-container" id="resultContainer" style="display: none;">
+        <h2>Generated Assessments</h2>
+        <div id="assessmentButtons"></div>
+        <div id="assessmentDetails"></div>
+    </div>
+
+    <script>
+        const generateBtn = document.getElementById('generateBtn');
+        const statusArea = document.getElementById('status-area');
+        const jobTitleInput = document.getElementById('jobTitle');
+        const skillsInput = document.getElementById('skills');
+        const resultContainer = document.getElementById('resultContainer');
+        const assessmentResult = document.getElementById('assessmentResult');
+
+        generateBtn.addEventListener('click', async () => {
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            const userId = user.id;
+
+            if (!token || !userId) {
+                statusArea.textContent = 'Please log in first before generating an assessment.';
+                statusArea.className = 'error';
+                setTimeout(() => window.location.href = '/login', 2000);
+                return;
+            }
+
+            const jobTitle = jobTitleInput.value.trim();
+            const skillsVal = skillsInput.value.trim();
+
+            if (!jobTitle || !skillsVal) {
+                statusArea.textContent = 'Please enter both Job Title and Skills.';
+                statusArea.className = 'error';
+                return;
+            }
+
+            // Split skills into an array
+            const skills = skillsVal.split(',').map(s => s.trim());
+
+            statusArea.textContent = 'Generating... (This may take a moment based on AI processing)';
+            statusArea.className = 'loading';
+            generateBtn.disabled = true;
+            generateBtn.style.opacity = '0.7';
+            resultContainer.style.display = 'none';
+
+            try {
+                const [claimedRes, targetRes] = await Promise.all([
+                    fetch('/api/v1/generate', {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ jobTitle, skills, type: 'claimed' })
+                    }),
+                    fetch('/api/v1/generate', {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ jobTitle, skills, type: 'target' })
+                    })
+                ]);
+
+                const claimedData = await claimedRes.json();
+                const targetData = await targetRes.json();
+
+                if (!claimedRes.ok || !claimedData.success) {
+                    throw new Error(claimedData.error || "Failed to generate claimed assessment");
+                }
+                if (!targetRes.ok || !targetData.success) {
+                    throw new Error(targetData.error || "Failed to generate target assessment");
+                }
+
+                const allAssmnts = [];
+                if (claimedData.assessment && Array.isArray(claimedData.assessment.assessments)) {
+                    allAssmnts.push(...claimedData.assessment.assessments);
+                }
+                if (targetData.assessment && Array.isArray(targetData.assessment.assessments)) {
+                    allAssmnts.push(...targetData.assessment.assessments);
+                }
+
+                const data = { assessment: { assessments: allAssmnts } };
+
+                statusArea.textContent = 'Assessment generated successfully!';
+                statusArea.className = 'success';
+
+                // Display Result
+                resultContainer.style.display = 'block';
+                const btnContainer = document.getElementById('assessmentButtons');
+                const detailsContainer = document.getElementById('assessmentDetails');
+                btnContainer.innerHTML = '';
+                detailsContainer.innerHTML = '';
+
+                const claimedSkillsSection = document.createElement('div');
+                claimedSkillsSection.innerHTML = '<h3 style="margin-bottom: 5px;">Claimed Skills Assessments</h3><p style="font-size: 14px; margin-top: 0; color: #555;">Based strictly on the skills parsed from your text/input.</p><div id="claimedSkillsBtns" style="margin-bottom: 20px;"></div>';
+
+                const targetTitleSection = document.createElement('div');
+                targetTitleSection.innerHTML = '<h3 style="margin-bottom: 5px;">Target Job Title Assessments</h3><p style="font-size: 14px; margin-top: 0; color: #555;">Additional must-have skills generated intelligently based purely on your desired job role.</p><div id="targetTitleBtns" style="margin-bottom: 20px;"></div>';
+
+                btnContainer.appendChild(claimedSkillsSection);
+                btnContainer.appendChild(targetTitleSection);
+
+                if (data.assessment && Array.isArray(data.assessment.assessments)) {
+                    data.assessment.assessments.forEach((assmnt, index) => {
+                        const btn = document.createElement('button');
+                        btn.textContent = `View ${assmnt.skill || `Assessment ${index + 1}`}`;
+                        btn.style.marginRight = '10px';
+                        btn.style.marginBottom = '10px';
+
+                        if (assmnt.section && assmnt.section.includes('Target Job Title')) {
+                            targetTitleSection.querySelector('#targetTitleBtns').appendChild(btn);
+                        } else {
+                            claimedSkillsSection.querySelector('#claimedSkillsBtns').appendChild(btn);
+                        }
+
+                        const detailDiv = document.createElement('div');
+                        detailDiv.style.display = 'none';
+                        detailDiv.style.marginTop = '20px';
+                        detailDiv.style.borderTop = '1px dashed black';
+                        detailDiv.style.paddingTop = '10px';
+
+                        let htmlContent = `<h3>${assmnt.title || assmnt.skill} (${assmnt.priority || ''})</h3>`;
+                        detailDiv.innerHTML = htmlContent;
+
+                        const questionsContainer = document.createElement('div');
+
+                        if (assmnt.questions) {
+                            assmnt.questions.forEach((q, qIndex) => {
+                                const qBlock = document.createElement('div');
+                                qBlock.style.marginBottom = '30px';
+                                qBlock.className = 'question-block';
+
+                                let blockHtml = `<strong>Q${q.id || (qIndex + 1)}: ${q.question || ''}</strong><br>`;
+                                if (q.code_snippet && q.code_snippet !== 'null') {
+                                    blockHtml += `<pre>${String(q.code_snippet).replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>`;
+                                }
+
+                                blockHtml += `<div style="margin-top: 10px;">`;
+                                let renderOptions = q.options;
+                                if ((!renderOptions || renderOptions.length === 0) && String(q.type).toLowerCase() === 'true_false') {
+                                    renderOptions = ['True', 'False'];
+                                }
+                                if (renderOptions && renderOptions.length > 0) {
+                                    renderOptions.forEach((opt, optIndex) => {
+                                        blockHtml += `
+                                            <div style="margin-bottom: 8px;">
+                                                <label style="cursor: pointer; display: flex; align-items: start; gap: 8px;">
+                                                    <input type="radio" name="q-${index}-${qIndex}" value="${String(opt).replace(/"/g, '&quot;')}" style="margin-top: 4px;" />
+                                                    <span>${String(opt).replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span>
+                                                </label>
+                                            </div>
+                                        `;
+                                    });
+                                } else {
+                                    // Text input for fill-in-the-blank and non-multiple-choice
+                                    blockHtml += `
+                                        <div style="margin-bottom: 8px;">
+                                            <input type="text" class="text-answer" name="q-${index}-${qIndex}" placeholder="Type your answer here..." style="width: 100%; max-width: 400px; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" />
+                                        </div>
+                                    `;
+                                }
+                                blockHtml += `</div>`;
+
+                                blockHtml += `
+                                    <div class="feedback" style="display: none; margin-top: 15px; padding: 12px; background-color: #f9f9f9; border-left: 4px solid #ccc;">
+                                        <div class="feedback-result" style="font-weight: bold; margin-bottom: 5px;"></div>
+                                        <div style="margin-bottom: 5px;"><em>Correct Answer: <span style="font-weight: 500;">${String(q.correct_answer || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span></em></div>
+                                        <div><small><strong>Explanation:</strong> ${q.explanation || ''}</small></div>
+                                    </div>
+                                `;
+
+                                qBlock.innerHTML = blockHtml;
+                                qBlock.correctAnswerValue = q.correct_answer;
+                                qBlock.dbId = q.db_id;
+                                questionsContainer.appendChild(qBlock);
+                            });
+                        }
+
+                        detailDiv.appendChild(questionsContainer);
+
+                        if (assmnt.questions && assmnt.questions.length > 0) {
+                            const submitBtn = document.createElement('button');
+                            submitBtn.textContent = 'Submit Answers';
+                            submitBtn.style.marginTop = '15px';
+                            submitBtn.style.padding = '8px 16px';
+                            submitBtn.style.cursor = 'pointer';
+                            submitBtn.style.backgroundColor = '#000';
+                            submitBtn.style.color = '#fff';
+                            submitBtn.style.border = 'none';
+                            submitBtn.style.fontWeight = 'bold';
+
+                            submitBtn.onclick = async () => {
+                                const qBlocks = questionsContainer.querySelectorAll('.question-block');
+                                let score = 0;
+                                let resultsToSave = [];
+
+                                qBlocks.forEach(block => {
+                                    const correctAnswer = block.correctAnswerValue || '';
+                                    const selectedInput = block.querySelector('input[type="radio"]:checked');
+                                    const textInput = block.querySelector('input[type="text"].text-answer');
+                                    const feedback = block.querySelector('.feedback');
+                                    const feedbackResult = block.querySelector('.feedback-result');
+
+                                    feedback.style.display = 'block';
+
+                                    let isCorrect = false;
+                                    let userSelectedVal = null;
+
+                                    if (selectedInput) {
+                                        userSelectedVal = String(selectedInput.value).trim();
+                                    } else if (textInput && textInput.value.trim() !== '') {
+                                        userSelectedVal = String(textInput.value).trim();
+                                    }
+
+                                    if (userSelectedVal !== null) {
+                                        let selRaw = userSelectedVal;
+                                        let corRaw = String(correctAnswer).trim();
+
+                                        isCorrect = selRaw.toLowerCase() === corRaw.toLowerCase();
+
+                                        if (!isCorrect) {
+                                            let stripSel = selRaw.replace(/^[a-e][\.\)]\s*/i, '').trim().toLowerCase();
+                                            let stripCor = corRaw.replace(/^[a-e][\.\)]\s*/i, '').trim().toLowerCase();
+
+                                            if (stripSel === stripCor && stripSel.length > 0) {
+                                                isCorrect = true;
+                                            } else if (/^[a-e]$/i.test(corRaw)) {
+                                                isCorrect = selRaw.toLowerCase().startsWith(corRaw.toLowerCase() + '.') || selRaw.toLowerCase().startsWith(corRaw.toLowerCase() + ')');
+                                            } else if (/^[a-e]$/i.test(selRaw)) {
+                                                isCorrect = corRaw.toLowerCase().startsWith(selRaw.toLowerCase() + '.') || corRaw.toLowerCase().startsWith(selRaw.toLowerCase() + ')');
+                                            } else if (stripSel.length > 3 && stripCor.length > 3 && (stripSel.includes(stripCor) || stripCor.includes(stripSel))) {
+                                                isCorrect = true;
+                                            }
+                                        }
+
+                                        if (isCorrect) {
+                                            score++;
+                                            feedbackResult.textContent = 'Correct!';
+                                            feedbackResult.style.color = 'green';
+                                            feedback.style.borderLeftColor = 'green';
+                                        } else {
+                                            feedbackResult.textContent = 'Incorrect';
+                                            feedbackResult.style.color = 'red';
+                                            feedback.style.borderLeftColor = 'red';
+                                        }
+                                    } else {
+                                        feedbackResult.textContent = 'No answer provided';
+                                        feedbackResult.style.color = 'orange';
+                                        feedback.style.borderLeftColor = 'orange';
+                                    }
+
+                                    resultsToSave.push({
+                                        question_id: block.dbId,
+                                        selected_option: userSelectedVal,
+                                        is_correct: isCorrect
+                                    });
+
+                                    block.querySelectorAll('input').forEach(inp => inp.disabled = true);
+                                });
+
+                                let scoreDiv = document.createElement('div');
+                                scoreDiv.style.marginTop = '20px';
+                                scoreDiv.style.padding = '15px';
+                                scoreDiv.style.backgroundColor = '#f0f0f0';
+                                scoreDiv.style.borderLeft = '4px solid #000';
+                                scoreDiv.style.fontSize = '18px';
+                                scoreDiv.style.fontWeight = 'bold';
+                                scoreDiv.textContent = `You scored ${score} out of ${qBlocks.length}!`;
+
+                                detailDiv.appendChild(scoreDiv);
+                                submitBtn.style.display = 'none';
+
+                                // Send results to backend
+                                const token = localStorage.getItem('token');
+                                if (token && resultsToSave.length > 0) {
+                                    scoreDiv.innerHTML += '<br><small>Saving results to database...</small>';
+                                    try {
+                                        const submitRes = await fetch('/api/v1/submit', {
+                                            method: 'POST',
+                                            headers: { 
+                                                'Content-Type': 'application/json',
+                                                'Authorization': `Bearer ${token}`
+                                            },
+                                            body: JSON.stringify({ results: resultsToSave })
+                                        });
+                                        if (submitRes.ok) {
+                                            scoreDiv.innerHTML += '<br><small style="color: green;">Results successfully saved!</small>';
+                                        } else {
+                                            const errorData = await submitRes.json();
+                                            scoreDiv.innerHTML += `<br><small style="color: red;">Failed to save results: ${errorData.error || 'Unknown error'}</small>`;
+                                        }
+                                    } catch (err) {
+                                        scoreDiv.innerHTML += '<br><small style="color: red;">Network error saving results.</small>';
+                                    }
+                                }
+                            };
+
+                            detailDiv.appendChild(submitBtn);
+                        }
+
+                        btn.onclick = () => {
+                            Array.from(detailsContainer.children).forEach(child => child.style.display = 'none');
+                            detailDiv.style.display = 'block';
+                        };
+
+                        detailsContainer.appendChild(detailDiv);
+                    });
+
+                    // Cleanup empty sections defensively
+                    if (targetTitleSection.querySelector('#targetTitleBtns').children.length === 0) {
+                        targetTitleSection.style.display = 'none';
+                    }
+                    if (claimedSkillsSection.querySelector('#claimedSkillsBtns').children.length === 0) {
+                        claimedSkillsSection.style.display = 'none';
+                    }
+
+                } else {
+                    // Fallback in case AI doesn't follow the exact JSON grouping structure
+                    detailsContainer.innerHTML = '<pre>' + JSON.stringify(data.assessment, null, 2) + '</pre>';
+                }
+
+            } catch (error) {
+                statusArea.textContent = 'Error: ' + error.message;
+                statusArea.className = 'error';
+                console.error(error);
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.style.opacity = '1';
+
+                if (statusArea.className === 'success') {
+                    setTimeout(() => {
+                        statusArea.textContent = '';
+                    }, 4000);
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

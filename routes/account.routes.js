@@ -30,7 +30,7 @@ router.post('/login', async (req, res) => {
             { expiresIn: '24h' }
         );
 
-        return res.json({ success: true, message: "Logged in!", token});
+        return res.json({ success: true, message: "Logged in!", token, user: { id: user.id, full_name: user.full_name, email: user.email }});
 
     } catch (err) { 
         return res.status(500).json({ success: false, message: err.message }); 
@@ -45,10 +45,18 @@ router.post('/register', async (req,res)=>{
         const hashedPassword = await bcrypt.hash(password, 12);
         const result = await pool.query(
             `INSERT INTO users (full_name, email, password, location, preferred_job_title) 
-             VALUES ($1, $2, $3, $4, $5) RETURNING id, email`,
+             VALUES ($1, $2, $3, $4, $5) RETURNING id, full_name, email`,
             [full_name, email, hashedPassword, location, preferred_job_title]
         );
-        res.status(201).json(result.rows);
+        
+        const user = result.rows[0];
+        const token = jwt.sign(
+            { id: user.id, email: user.email },
+            process.env.JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+
+        res.status(201).json({ success: true, token, user });
     } catch (err) {
         res.status(500).json({ success: false, error: `Registration failed: ${err.message} ` });
     }

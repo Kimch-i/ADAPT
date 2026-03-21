@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Job Matches</title>
+</head>
+<body>
+    <div>
+        <a href="/results">&larr; Back to Results</a>
+    </div>
+    
+    <h1>Guaranteed Job Matches</h1>
+    <p>Based dynamically on your test scores and preferred career track.</p>
+    
+    <div id="status">Loading live APIs...</div>
+
+    <div id="jobsOutput">
+        <!-- Rendered lists here -->
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            const userId = user.id;
+
+            if (!token || !userId) {
+                window.location.href = '/login';
+                return;
+            }
+
+            const status = document.getElementById('status');
+            const output = document.getElementById('jobsOutput');
+
+            try {
+                const res = await fetch(`/api/v1/recommendations`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await res.json();
+
+                if (!res.ok) throw new Error(data.error || 'Failed to fetch job matches');
+
+                status.style.display = 'none';
+
+                if (data.job_listings && data.job_listings.length > 0) {
+                    data.job_listings.forEach(group => {
+                        const section = document.createElement('div');
+                        
+                        let jobsHtml = "<ul>";
+                        if (group.listings && group.listings.length > 0) {
+                            group.listings.forEach(job => {
+                                let salaryStr = "";
+                                if (job.salary) {
+                                    if (typeof job.salary === 'object' && job.salary.min) {
+                                        salaryStr = ` • Salary Check: ${job.salary.min} - ${job.salary.max} ${job.salary.currency || ''}`;
+                                    } else if (typeof job.salary === 'string' || typeof job.salary === 'number') {
+                                        salaryStr = ` • Salary Check: ${job.salary}`;
+                                    }
+                                }
+
+                                jobsHtml += `
+                                    <li style="margin-bottom: 10px;">
+                                        <strong>[${String(job.source).toUpperCase()}]</strong> 
+                                        <a href="${job.url}" target="_blank">${job.title}</a> 
+                                        at ${job.company || 'Unknown'} 
+                                        <em>(${job.location || 'Remote'})</em>
+                                        ${salaryStr}
+                                    </li>
+                                `;
+                            });
+                        } else {
+                            jobsHtml += "<li>No current live API matches found for this specific role right now.</li>";
+                        }
+                        jobsHtml += "</ul>";
+
+                        section.innerHTML = `
+                            <h2>Target: ${group.job_title}</h2>
+                            <p><strong>Match Score:</strong> ${group.match_score}%</p>
+                            <p><strong>Readiness:</strong> ${group.readiness}</p>
+                            <p><strong>Reason:</strong> ${group.reason}</p>
+                            <h3>Live Real-Time Opportunities Pulled:</h3>
+                            ${jobsHtml}
+                            <hr>
+                        `;
+                        output.appendChild(section);
+                    });
+                } else {
+                    output.innerHTML = "<p>No matches could be built. Take your exams first!</p>";
+                }
+            } catch (err) {
+                status.textContent = 'Error: ' + err.message;
+            }
+        });
+    </script>
+</body>
+</html>
