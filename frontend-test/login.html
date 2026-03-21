@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link rel="icon" type="image/png" href="assets/meoew.png">
+    <title>Login | ADAPT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-tertiary-fixed": "#331200",
+                        "surface-container-highest": "#e2e3e2",
+                        "tertiary-fixed": "#ffdbc9",
+                        "primary-container": "#005f5f",
+                        "on-primary-fixed-variant": "#004f4f",
+                        "surface-container": "#edeeee",
+                        "on-primary": "#ffffff",
+                        "on-secondary-container": "#506969",
+                        "on-secondary": "#ffffff",
+                        "surface-container-high": "#e7e8e8",
+                        "error-container": "#ffdad6",
+                        "on-tertiary": "#ffffff",
+                        "inverse-primary": "#8ad3d2",
+                        "primary-fixed-dim": "#8ad3d2",
+                        "background": "#f9f9f9",
+                        "tertiary-container": "#7d4726",
+                        "inverse-surface": "#2e3131",
+                        "on-secondary-fixed-variant": "#324b4b",
+                        "surface-container-low": "#f3f4f3",
+                        "tertiary": "#613111",
+                        "on-primary-fixed": "#002020",
+                        "surface-variant": "#e2e3e2",
+                        "surface-dim": "#d9dada",
+                        "on-primary-container": "#8ed6d6",
+                        "on-surface-variant": "#3f4948",
+                        "secondary-fixed-dim": "#b1cccb",
+                        "surface-bright": "#f9f9f9",
+                        "on-surface": "#1a1c1c",
+                        "on-error": "#ffffff",
+                        "surface-tint": "#166969",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-background": "#1a1c1c",
+                        "inverse-on-surface": "#f0f1f0",
+                        "primary-fixed": "#a6efef",
+                        "secondary-fixed": "#cce8e7",
+                        "secondary-container": "#cce8e7",
+                        "error": "#ba1a1a",
+                        "outline-variant": "#bec9c8",
+                        "outline": "#6f7979",
+                        "tertiary-fixed-dim": "#ffb68d",
+                        "on-tertiary-container": "#ffbb95",
+                        "on-secondary-fixed": "#051f20",
+                        "on-tertiary-fixed-variant": "#6c391a",
+                        "surface": "#f9f9f9",
+                        "secondary": "#4a6363",
+                        "primary": "#004545"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #004545 0%, #005f5f 100%);
+        }
+    </style>
+</head>
+
+<body class="bg-background font-body text-on-surface antialiased">
+    <main class="min-h-screen flex flex-col md:flex-row">
+
+        <section class="hidden md:flex md:w-1/2 hero-gradient relative flex-col justify-between p-16 overflow-hidden">
+            <div class="absolute -top-24 -left-24 w-96 h-96 bg-primary-container rounded-full opacity-20 blur-3xl"></div>
+
+            <div class="relative z-10">
+                <div class="flex items-center gap-2 mb-20">
+                    <div class="w-10 h-10 bg-surface-container-lowest rounded-lg flex items-center justify-center">
+                        <img src="assets/meoew.png" alt="Adapt Icon" class="w-8 h-8">
+                    </div>
+                    <span class="font-headline font-extrabold text-2xl text-on-primary tracking-tighter">ADAPT</span>
+                </div>
+                <div class="max-w-xl">
+                    <h1 class="font-headline font-extrabold text-5xl lg:text-6xl text-on-primary leading-tight tracking-tight mb-6">
+                        The standard for professional excellence.
+                    </h1>
+                    <p class="text-on-primary-container text-xl leading-relaxed opacity-90">
+                        Join a network of verified experts where credentials are more than just words—they are proven assets.
+                    </p>
+                </div>
+            </div>
+
+            <div class="relative z-10 grid grid-cols-1 gap-4 mt-12">
+                <div class="glass-card p-6 rounded-xl flex items-center gap-5 transition-transform hover:scale-[1.02] duration-300">
+                    <div class="bg-primary p-3 rounded-lg shadow-inner">
+                        <span class="material-symbols-outlined text-primary-fixed" data-icon="security">security</span>
+                    </div>
+                    <div>
+                        <h3 class="font-headline font-bold text-on-primary text-lg">Enterprise-Grade Security</h3>
+                        <p class="text-on-primary-container text-sm opacity-80">Military-grade protection for your professional data.</p>
+                    </div>
+                </div>
+
+                <div class="glass-card p-6 rounded-xl flex items-center gap-5 transition-transform hover:scale-[1.02] duration-300">
+                    <div class="bg-primary p-3 rounded-lg shadow-inner">
+                        <span class="material-symbols-outlined text-primary-fixed" data-icon="encrypted">encrypted</span>
+                    </div>
+                    <div>
+                        <h3 class="font-headline font-bold text-on-primary text-lg">Cryptographic Verification</h3>
+                        <p class="text-on-primary-container text-sm opacity-80">Blockchain-anchored proof of every professional milestone.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="relative z-10 mt-12 flex gap-4">
+            </div>
+        </section>
+
+        <section class="flex-1 bg-surface flex items-center justify-center p-8 md:p-16 lg:p-24">
+            <div class="w-full max-w-md">
+
+                <div class="md:hidden flex items-center gap-2 mb-12">
+                    <span class="material-symbols-outlined text-primary text-3xl" data-icon="verified_user">verified_user</span>
+                    <span class="font-headline font-extrabold text-xl text-primary tracking-tighter">Architectural Verify</span>
+                </div>
+
+                <header class="mb-10">
+                    <h2 class="font-headline font-extrabold text-3xl text-on-surface mb-3">Welcome Back</h2>
+                    <p class="text-on-surface-variant font-medium">Access your professional portfolio and verified credentials.</p>
+                </header>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                    <button class="flex items-center justify-center gap-3 py-3 px-4 bg-surface-container-high rounded-xl text-on-surface font-semibold hover:bg-surface-container-highest transition-all duration-200 active:scale-95">
+                        <img alt="Google" class="w-5 h-5" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUS048SlxlG9wyRKh1_xYwDKo_cl2Krd9jhhoT3y-5Ba7bjc-40gAB4ALwVYz_qEfOvkXv4OWIXj5PzGMsW6XaNbvhglay-Zac6730AlEcOeJhLwkk_rYnaZ6y3PPd9LEC40Men2QGHEelUjhbfJiDww-_iIu8LiOb0FlxGzm94tB9woEp2riuP0bZT5ZUnwYEhbmCo3Z9fkC-aQIgvKwC6M2myXO3UdkfyYoiyUmWycemzsoD6_6OhUOZq_qSQrhdvFrF5OXOWE8" />
+                        <span>Google</span>
+                    </button>
+                    <button class="flex items-center justify-center gap-3 py-3 px-4 bg-surface-container-high rounded-xl text-on-surface font-semibold hover:bg-surface-container-highest transition-all duration-200 active:scale-95">
+                        <img alt="LinkedIn" class="w-5 h-5" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJr7y17J-MMT0RTpuz2_T41H82mi2wtyVQ99NCBVPHd9-fEUIZ8nmvX7RBb0nVlhkp7xaoAX4VaMMUawFoidR-e87VYpPyT4OZiFap7uSXde1aT0uSeWIT8bsIaUWJOO1boWP59Ex3aRKsc_rM55H24R5Ldk516S2hij5dv2KhuvOZyjoQLCNLnDZnJRu71ZY88VCv7q4So4GHXGg_728xnK12R8XfPUAk0VSUly_vnNVeuo-FJdzx7-D5RzrYBOw2t8y75GOYGZ8" />
+                        <span>LinkedIn</span>
+                    </button>
+                </div>
+
+                <div class="relative flex items-center mb-8">
+                    <div class="flex-grow border-t border-outline-variant opacity-30"></div>
+                    <span class="flex-shrink mx-4 text-xs font-bold tracking-widest text-outline uppercase">Or Continue With Email</span>
+                    <div class="flex-grow border-t border-outline-variant opacity-30"></div>
+                </div>
+
+                <form class="space-y-6">
+                    <div class="space-y-2">
+                        <label class="block text-xs font-bold text-on-surface-variant tracking-wider uppercase ml-1" for="email">Email</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-outline">
+                                <span class="material-symbols-outlined text-xl" data-icon="mail">mail</span>
+                            </span>
+                            <input class="block w-full pl-12 pr-4 py-4 bg-surface-container-high border-0 rounded-xl focus:ring-2 focus:ring-primary focus:bg-surface-container-lowest transition-all placeholder:text-outline" id="email" placeholder="name@company.com" type="email" />
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center px-1">
+                            <label class="block text-xs font-bold text-on-surface-variant tracking-wider uppercase" for="password">Password</label>
+                            <a class="text-xs font-bold text-primary hover:underline" href="#">Forgot?</a>
+                        </div>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-outline">
+                                <span class="material-symbols-outlined text-xl" data-icon="lock">lock</span>
+                            </span>
+                            <input class="block w-full pl-12 pr-4 py-4 bg-surface-container-high border-0 rounded-xl focus:ring-2 focus:ring-primary focus:bg-surface-container-lowest transition-all placeholder:text-outline" id="password" placeholder="••••••••" type="password" />
+                        </div>
+                    </div>
+
+                    <div class="flex items-center">
+                        <input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary bg-surface-container-high" id="remember" type="checkbox" />
+                        <label class="ml-3 text-sm font-medium text-on-surface-variant" for="remember">Keep me signed in</label>
+                    </div>
+
+                    <button class="w-full py-4 bg-primary text-on-primary font-headline font-extrabold text-lg rounded-full shadow-lg hover:shadow-primary/20 hover:scale-[1.01] active:scale-95 transition-all" type="submit">
+                        Sign In to ADAPT
+                    </button>
+                </form>
+
+                <footer class="mt-12 pt-8 border-t border-outline-variant/20 text-center">
+                    <p class="text-on-surface-variant font-medium">
+                        Don't have an account?
+                        <a class="text-primary font-bold hover:underline ml-1" href="signin.html">Create a Profile</a>
+                    </p>
+                </footer>
+            </div>
+        </section>
+    </main>
+
+    <div class="fixed inset-0 pointer-events-none">
+        <div class="absolute bottom-0 right-0 w-[500px] h-[500px] bg-secondary-fixed/5 rounded-full blur-[100px]"></div>
+    </div>
+</body>
+
+</html>

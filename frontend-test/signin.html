@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link rel="icon" type="image/png" href="assets/meoew.png">
+    <title>Create Your Profile | ADAPT</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-secondary-fixed": "#051f20",
+                        "tertiary-fixed": "#ffdbc9",
+                        "primary-container": "#005f5f",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#a6efef",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#d9dada",
+                        "primary-fixed-dim": "#8ad3d2",
+                        "surface-variant": "#e2e3e2",
+                        "on-surface": "#1a1c1c",
+                        "on-surface-variant": "#3f4948",
+                        "secondary-fixed": "#cce8e7",
+                        "on-primary-fixed-variant": "#004f4f",
+                        "outline-variant": "#bec9c8",
+                        "on-secondary-fixed-variant": "#324b4b",
+                        "inverse-on-surface": "#f0f1f0",
+                        "on-tertiary-fixed": "#331200",
+                        "surface-bright": "#f9f9f9",
+                        "primary": "#004545",
+                        "secondary": "#4a6363",
+                        "outline": "#6f7979",
+                        "surface-tint": "#166969",
+                        "secondary-fixed-dim": "#b1cccb",
+                        "inverse-primary": "#8ad3d2",
+                        "tertiary": "#613111",
+                        "on-tertiary-fixed-variant": "#6c391a",
+                        "on-primary-fixed": "#002020",
+                        "background": "#f9f9f9",
+                        "tertiary-container": "#7d4726",
+                        "secondary-container": "#cce8e7",
+                        "on-background": "#1a1c1c",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-error-container": "#93000a",
+                        "surface-container-high": "#e7e8e8",
+                        "on-primary-container": "#8ed6d6",
+                        "on-primary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "inverse-surface": "#2e3131",
+                        "surface-container-low": "#f3f4f3",
+                        "surface": "#f9f9f9",
+                        "on-tertiary-container": "#ffbb95",
+                        "on-error": "#ffffff",
+                        "surface-container-highest": "#e2e3e2",
+                        "surface-container": "#edeeee",
+                        "on-secondary-container": "#506969",
+                        "tertiary-fixed-dim": "#ffb68d"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+
+<body class="bg-surface font-body text-on-surface antialiased">
+    <main class="min-h-screen flex flex-col md:flex-row overflow-hidden">
+
+        <section class="relative w-full md:w-5/12 lg:w-4/12 bg-primary-container p-8 md:p-12 lg:p-16 flex flex-col justify-between overflow-hidden">
+            <div class="absolute -top-24 -left-24 w-96 h-96 bg-primary rounded-full blur-[120px] opacity-40"></div>
+            <div class="absolute -bottom-24 -right-24 w-64 h-64 bg-secondary-container rounded-full blur-[100px] opacity-20"></div>
+
+            <div class="relative z-10">
+                <div class="flex items-center gap-2 mb-16">
+                    <div class="w-10 h-10 bg-surface-container-lowest rounded-lg flex items-center justify-center">
+                        <img src="assets/meoew.png" alt="Adapt Icon" class="w-8 h-8">
+                    </div>
+                    <span class="text-xl font-black tracking-tighter text-surface-container-lowest font-headline">ADAPT</span>
+                </div>
+
+                <h1 class="font-headline text-4xl lg:text-5xl font-extrabold text-white leading-tight tracking-tight mb-6">
+                    The standard for professional excellence.
+                </h1>
+                <p class="text-on-primary-container text-lg font-medium max-w-md leading-relaxed mb-12">
+                    Join a network of verified experts where credentials are more than just words—they are proven assets.
+                </p>
+
+                <div class="space-y-4">
+                    <div class="glass-card p-6 rounded-xl flex items-start gap-4 transform transition-transform hover:scale-[1.02]">
+                        <div class="bg-primary/40 p-2 rounded-lg">
+                            <span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+                        </div>
+                        <div>
+                            <h3 class="text-white font-bold font-headline mb-1">Cryptographic Verification</h3>
+                            <p class="text-on-primary-container/80 text-sm leading-snug">Immutable proof of your professional journey powered by secure encryption.</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-6 rounded-xl flex items-start gap-4 transform transition-transform hover:scale-[1.02]">
+                        <div class="bg-primary/40 p-2 rounded-lg">
+                            <span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">security</span>
+                        </div>
+                        <div>
+                            <h3 class="text-white font-bold font-headline mb-1">Enterprise-Grade Security</h3>
+                            <p class="text-on-primary-container/80 text-sm leading-snug">Institutional protection for your most sensitive professional data.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="relative z-10 mt-12">
+                <p class="text-on-primary-container/60 text-[10px] tracking-[0.2em] uppercase font-bold">
+                    System Node: Verified-Mainnet-01
+                </p>
+            </div>
+        </section>
+
+        <section class="w-full md:w-7/12 lg:w-8/12 bg-surface-container-lowest p-8 md:p-16 lg:p-24 flex items-center justify-center">
+            <div class="w-full max-w-xl">
+                <header class="mb-10">
+                    <h2 class="font-headline text-3xl font-extrabold text-on-surface tracking-tight mb-2">Create Your Profile</h2>
+                    <p class="text-on-surface-variant font-medium">Build your verified professional portfolio today.</p>
+                </header>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                    <button class="flex items-center justify-center gap-3 px-6 py-3.5 rounded-full bg-surface-container-low text-on-surface font-semibold text-sm hover:bg-surface-container-high transition-all active:scale-[0.98]">
+                        <img alt="Google" class="w-5 h-5" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYkAn6J0WVuYRk3XFSojqyFiDDG7KnxTgjMplNQjbkoz6akgp5kIRnD9JT_rlMnOOwV1BTjtBmpjmFOEQijd6dJoymksSZRz-xCSs_nd3wsyD6Jeb0yA10mgpcKD5P8_fKuBAnha75i-86voAS38u5ts2ll2wLlxiOJxp8Hjg3FUcSky1W4kU8pnajvXrhcfjJHC5ovMtLY-GzU3gCt668Ste5mDHo3IemgypS5kUBFZuqxL_c_Am0vDfinRURgg7oFl-hO1Wc7Ek" />
+                        Continue with Google
+                    </button>
+                    <button class="flex items-center justify-center gap-3 px-6 py-3.5 rounded-full bg-surface-container-low text-on-surface font-semibold text-sm hover:bg-surface-container-high transition-all active:scale-[0.98]">
+                        <svg class="w-5 h-5 text-[#0077b5]" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"></path>
+                        </svg>
+                        Continue with LinkedIn
+                    </button>
+                </div>
+
+                <div class="relative flex items-center gap-4 mb-8">
+                    <div class="flex-grow h-[1px] bg-outline-variant/30"></div>
+                    <span class="text-xs font-bold text-outline uppercase tracking-widest">or register manually</span>
+                    <div class="flex-grow h-[1px] bg-outline-variant/30"></div>
+                </div>
+
+                <form class="space-y-5">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider ml-1" for="full_name">Full Name</label>
+                            <input class="w-full px-5 py-3.5 bg-surface-container-high border-none rounded-xl focus:ring-2 focus:ring-surface-tint focus:bg-surface-container-lowest transition-all placeholder:text-outline/60 text-on-surface font-medium" id="full_name" placeholder="Johnathan Architect" type="text" />
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider ml-1" for="email">Email</label>
+                            <input class="w-full px-5 py-3.5 bg-surface-container-high border-none rounded-xl focus:ring-2 focus:ring-surface-tint focus:bg-surface-container-lowest transition-all placeholder:text-outline/60 text-on-surface font-medium" id="email" placeholder="john@company.com" type="email" />
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider ml-1" for="password">Password</label>
+                        <div class="relative">
+                            <input class="w-full px-5 py-3.5 bg-surface-container-high border-none rounded-xl focus:ring-2 focus:ring-surface-tint focus:bg-surface-container-lowest transition-all placeholder:text-outline/60 text-on-surface font-medium" id="password" placeholder="••••••••••••" type="password" />
+                            <button class="absolute right-4 top-1/2 -translate-y-1/2 text-outline hover:text-primary transition-colors" type="button">
+                                <span class="material-symbols-outlined text-xl">visibility</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider ml-1" for="location">Location</label>
+                            <div class="relative">
+                                <input class="w-full pl-11 pr-5 py-3.5 bg-surface-container-high border-none rounded-xl focus:ring-2 focus:ring-surface-tint focus:bg-surface-container-lowest transition-all placeholder:text-outline/60 text-on-surface font-medium" id="location" placeholder="London, UK" type="text" />
+                                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline text-xl">location_on</span>
+                            </div>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider ml-1" for="job_title">Preferred Job Title <span class="text-outline font-normal lowercase">(Optional)</span></label>
+                            <input class="w-full px-5 py-3.5 bg-surface-container-high border-none rounded-xl focus:ring-2 focus:ring-surface-tint focus:bg-surface-container-lowest transition-all placeholder:text-outline/60 text-on-surface font-medium" id="job_title" placeholder="Senior Systems Engineer" type="text" />
+                        </div>
+                    </div>
+
+                    <div class="pt-4">
+                        <button class="w-full py-4 rounded-full bg-primary text-white font-headline font-bold text-base hover:shadow-xl hover:shadow-primary/10 transition-all active:scale-[0.99] flex items-center justify-center gap-2" type="submit">
+                            <span>Create Profile</span>
+                            <span class="material-symbols-outlined text-lg">arrow_forward</span>
+                        </button>
+                    </div>
+                </form>
+
+                <div class="mt-8 pt-8 border-t border-outline-variant/20 flex flex-col items-center gap-4">
+                    <p class="text-on-surface-variant font-medium">
+                        Already have an account?
+                        <a class="text-primary font-bold hover:underline ml-1" href="login.html">Log In</a>
+                    </p>
+                    <p class="text-[11px] text-outline text-center leading-relaxed max-w-sm">
+                        By creating an account, you agree to our <a class="underline" href="#">Terms of Service</a> and <a class="underline" href="#">Privacy Protocol</a>.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>
