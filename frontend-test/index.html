@@ -19,6 +19,7 @@
         <input type="file" id="resume" accept=".pdf,.docx" required>
 
         <button type="submit" id="btn">Upload and Process</button>
+        <button onclick="simulateLogin()">Simulate Login</button>
     </form>
     <p id="status"></p>
 </div>
@@ -26,6 +27,23 @@
 <script>
     const form = document.getElementById('uploadForm');
     const status = document.getElementById('status');
+
+
+    async function simulateLogin() {
+        // Simulate a login by setting a dummy token in localStorage
+        const response = await fetch('http://localhost:3000/api/v1/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: 'test@email.com', password: 'testpass' })
+        });
+
+        const result = await response.json();
+        if (result.token) {
+            localStorage.setItem('token', result.token);
+            alert('Login successful! Token stored in localStorage.');
+        }
+    }
+
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -37,12 +55,15 @@
         const formData = new FormData();
         // The key 'resume' MUST match upload.single('resume') in your backend
         formData.append('resume', fileInput.files[0]);
+        formData.append("userId", localStorage.getItem('id'));
 
         try {
-            // 2. Send to your Node.js server
             const response = await fetch('http://localhost:3000/api/v1/upload', {
                 method: 'POST',
-                body: formData
+                body: formData,
+                headers: {
+                    "authorization": `Bearer ${localStorage.getItem('token')}`
+                }
                 // IMPORTANT: Do NOT set Content-Type header. 
                 // The browser will automatically set it to multipart/form-data 
                 // with the correct boundary string.
@@ -62,6 +83,8 @@
             status.style.color = "red";
             status.innerText = "Error: " + err.message;
         }
+
+
     });
 </script>
 
