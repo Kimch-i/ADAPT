@@ -1,52 +1,6 @@
-<<<<<<< HEAD
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Login</title>
-</head>
-<body>
-    <h2>Login</h2>
-    <form id="loginForm">
-        <input type="email" id="email" placeholder="Email" required><br><br>
-        <input type="password" id="password" placeholder="Password" required><br><br>
-        <button type="submit">Sign In</button>
-    </form>
-    <div id="error-msg" style="color: red; margin-top: 10px;"></div>
-    <p>Don't have an account? <a href="/register">Sign Up</a></p>
 
-    <script>
-        const loginForm = document.getElementById('loginForm');
-        const errorMsg = document.getElementById('error-msg');
 
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            errorMsg.innerText = '';
 
-            try {
-                const response = await fetch('/api/v1/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
-                });
-
-                const data = await response.json();
-                if (data.success) {
-                    localStorage.setItem('token', data.token);
-                    window.location.href = '/assessment';
-                } else {
-                    throw new Error(data.message || 'Login failed');
-                }
-            } catch (err) {
-                errorMsg.innerText = err.message;
-            }
-        });
-    </script>
-</body>
-</html>
-=======
 <!DOCTYPE html>
 <html class="light" lang="en">
 
@@ -126,6 +80,38 @@
                 },
             },
         }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginForm = document.getElementById('loginForm');
+            //const errorMsg = document.getElementById('error-msg');
+
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                //errorMsg.innerText = '';
+
+                try {
+                    const response = await fetch('http://localhost:3000/api/v1/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, password })
+                    });
+                    
+                    const data = await response.json();
+                    console.log(data);
+                    if (data.success) {
+                        localStorage.setItem('token', data.token);
+                    } else {
+                        throw new Error(data.message || 'Login failed');
+                    }
+                } catch (err) {
+                    console.error('Login error:', err);
+                    //errorMsg.innerText = err.message;
+                }
+            });
+        });
     </script>
     <style>
         .material-symbols-outlined {
@@ -223,7 +209,7 @@
                     <div class="flex-grow border-t border-outline-variant opacity-30"></div>
                 </div>
 
-                <form class="space-y-6">
+                <form class="space-y-6" id="loginForm">
                     <div class="space-y-2">
                         <label class="block text-xs font-bold text-on-surface-variant tracking-wider uppercase ml-1" for="email">Email</label>
                         <div class="relative">
@@ -252,7 +238,7 @@
                         <label class="ml-3 text-sm font-medium text-on-surface-variant" for="remember">Keep me signed in</label>
                     </div>
 
-                    <button class="w-full py-4 bg-primary text-on-primary font-headline font-extrabold text-lg rounded-full shadow-lg hover:shadow-primary/20 hover:scale-[1.01] active:scale-95 transition-all" type="submit">
+                    <button class="w-full py-4 bg-primary text-on-primary font-headline font-extrabold text-lg rounded-full shadow-lg hover:shadow-primary/20 hover:scale-[1.01] active:scale-95 transition-all" type="submit" id="signin">
                         Sign In to ADAPT
                     </button>
                 </form>
@@ -273,4 +259,3 @@
 </body>
 
 </html>
->>>>>>> a628de716dd857d54f7d89a49135a1409ea8af23

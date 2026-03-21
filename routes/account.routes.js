@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
-
+    console.log("Login attempt:", email);
     try {
         const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
         
@@ -29,7 +29,7 @@ router.post('/login', async (req, res) => {
             process.env.JWT_SECRET,
             { expiresIn: '24h' }
         );
-
+        
         return res.json({ success: true, message: "Logged in!", token, user: { id: user.id, full_name: user.full_name, email: user.email }});
 
     } catch (err) { 
