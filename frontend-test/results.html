@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Results</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div>
+        <a href="/assessment">&larr; Back to Assessments</a> | <a href="/jobs">View Guaranteed Job Matches &rarr;</a>
+    </div>
+    
+    <h1>My Assessment Results</h1>
+    <p>Overview of all the assessments you've generated and taken.</p>
+
+    <div id="status">Loading...</div>
+    
+    <table id="resultsTable" style="display: none;" border="1" cellpadding="5" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Date Generated</th>
+                <th>Skill</th>
+                <th>Job Role</th>
+                <th>Score</th>
+                <th>% Correct</th>
+            </tr>
+        </thead>
+        <tbody id="resultsBody">
+            <!-- Rows injected dynamically -->
+        </tbody>
+    </table>
+
+    <div id="chartContainer" style="width: 600px; max-width: 100%; margin: 30px 0; display: none;">
+    </div>
+
+    <hr>
+
+    <h2>My Learning Path Roadmap</h2>
+    <p>Your AI-curated curriculum specifically structured around your weakest assessment links automatically generates here upon completing your exams.</p>
+    
+    <div id="lpStatus" style="display: none;"></div>
+
+    <div id="learningPathOutput" style="display: none;">
+        <h3>Target Role: <span id="lpJobTitle"></span></h3>
+        <h3>Job Readiness Score: <span id="lpReadiness"></span></h3>
+        <h3>Weeks to Job Ready: <span id="lpWeeks"></span></h3>
+
+        <h4>Most Critical Bottleneck</h4>
+        <div id="lpMostCritical"></div>
+
+        <hr>
+        
+        <div id="lpSteps">
+            <!-- Steps injected here -->
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            
+            if (!token || !user.id) {
+                window.location.href = '/login';
+                return;
+            }
+
+            const userId = user.id;
+
+            const status = document.getElementById('status');
+            const table = document.getElementById('resultsTable');
+            const tbody = document.getElementById('resultsBody');
+
+            try {
+                const res = await fetch(`/api/v1/my-results`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await res.json();
+
+                if (!res.ok) {
+                    throw new Error(data.error || 'Failed to fetch results');
+                }
+
+                if (data.results && data.results.length > 0) {
+                    status.style.display = 'none';
+                    table.style.display = 'table';
+
+                    // Group exactly for Radar Chart
+                    const uniqueSkills = [...new Set(data.results.map(r => r.skill))];
+                    const datasetsByRole = {};
+
+                    data.results.forEach(r => {
+                        const tr = document.createElement('tr');
+                        
+                        const dateCell = document.createElement('td');
+                        dateCell.textContent = new Date(r.created_at).toLocaleString();
+                        
+                        const skillCell = document.createElement('td');
+                        skillCell.textContent = r.skill;
+
+                        const jobCell = document.createElement('td');
+                        jobCell.textContent = r.job_title;
+
+                        const scoreCell = document.createElement('td');
+                        scoreCell.textContent = `${r.correct_answers} / ${r.total_questions}`;
+
+                        const percentCell = document.createElement('td');
+                        const total = parseInt(r.total_questions) || 0;
+                        const answered = parseInt(r.answered_questions) || 0;
+                        const correct = parseFloat(r.correct_answers) || 0;
+                        
+                        let percentStr = "Not Taken";
+                        if (answered > 0 && total > 0) {
+                            percentStr = Math.round((correct / total) * 100) + '%';
+                        }
+                        percentCell.textContent = percentStr;
+
+                        // Radar Grouping mapping hook using EXACT raw correct score instead of %
+                        if (!datasetsByRole[r.job_title]) {
+                            datasetsByRole[r.job_title] = {};
+                        }
+                        datasetsByRole[r.job_title][r.skill] = correct;
+
+                        tr.appendChild(dateCell);
+                        tr.appendChild(skillCell);
+                        tr.appendChild(jobCell);
+                        tr.appendChild(scoreCell);
+                        tr.appendChild(percentCell);
+
+                        tbody.appendChild(tr);
+                    });
+
+                    // Render Separate Radar Charts per Role
+                    const chartContainer = document.getElementById('chartContainer');
+                    chartContainer.innerHTML = ''; // clear initial contents
+
+                    const colors = [
+                        { bg: 'rgba(54, 162, 235, 0.2)', border: 'rgba(54, 162, 235, 1)' },
+                        { bg: 'rgba(255, 99, 132, 0.2)', border: 'rgba(255, 99, 132, 1)' },
+                        { bg: 'rgba(75, 192, 192, 0.2)', border: 'rgba(75, 192, 192, 1)' }
+                    ];
+
+                    let cIdx = 0;
+                    for (const role in datasetsByRole) {
+                        const skillsMap = datasetsByRole[role];
+                        const roleSkills = Object.keys(skillsMap);
+                        const dataPoints = roleSkills.map(s => skillsMap[s]);
+
+                        const wrapper = document.createElement('div');
+                        wrapper.style.marginBottom = '40px';
+                        
+                        const title = document.createElement('h3');
+                        title.textContent = `Skills Profile: ${role}`;
+                        wrapper.appendChild(title);
+
+                        const canvas = document.createElement('canvas');
+                        wrapper.appendChild(canvas);
+                        chartContainer.appendChild(wrapper);
+
+                        new Chart(canvas, {
+                            type: 'radar',
+                            data: {
+                                labels: roleSkills,
+                                datasets: [{
+                                    label: role,
+                                    data: dataPoints,
+                                    fill: true,
+                                    backgroundColor: colors[cIdx % colors.length].bg,
+                                    borderColor: colors[cIdx % colors.length].border,
+                                    pointBackgroundColor: colors[cIdx % colors.length].border,
+                                    pointBorderColor: '#fff',
+                                    pointHoverBackgroundColor: '#fff',
+                                    pointHoverBorderColor: colors[cIdx % colors.length].border
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                scales: {
+                                    r: {
+                                        angleLines: { display: true },
+                                        min: 0,
+                                        max: 15,
+                                        ticks: {
+                                            stepSize: 3
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                        
+                        cIdx++;
+                    }
+
+                    chartContainer.style.display = 'block';
+
+                } else {
+                    status.textContent = "You haven't generated or taken any assessments yet.";
+                    return; 
+                }
+
+                await generateLearningPath(true);
+            } catch (err) {
+                status.textContent = 'Error: ' + err.message;
+            }
+        });
+
+        async function generateLearningPath(autoLoad = false) {
+            const alertBox = document.getElementById('lpStatus');
+            const targetContainer = document.getElementById('learningPathOutput');
+            const readinessEl = document.getElementById('lpReadiness');
+            const jobTitleEl = document.getElementById('lpJobTitle');
+            const weeksEl = document.getElementById('lpWeeks');
+            const mostCriticalEl = document.getElementById('lpMostCritical');
+            const stepsEl = document.getElementById('lpSteps');
+
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            const userId = user.id;
+
+            if (!token || !userId) {
+                if (!autoLoad) alert("Please log in again.");
+                return;
+            }
+
+            alertBox.style.display = 'block';
+            alertBox.innerHTML = `<em>Generating: The AI is evaluating your scores and pulling comprehensive learning resources. Please wait...</em>`;
+            
+            targetContainer.style.display = 'none';
+            stepsEl.innerHTML = '';
+
+            try {
+                const res = await fetch('/api/v1/generate-learning-path', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({})
+                });
+
+                const data = await res.json();
+
+                if (!res.ok || !data.success) {
+                    throw new Error(data.error || "Failed to generate learning path");
+                }
+
+                alertBox.style.display = 'none';
+
+                const lp = data.learningPath;
+                jobTitleEl.textContent = lp.target_job_title || "Unknown Role";
+                readinessEl.textContent = lp.readiness_score + "%";
+                weeksEl.textContent = lp.weeks_to_job_ready;
+
+                if (lp.most_critical_skill) {
+                    mostCriticalEl.innerHTML = `<strong>${lp.most_critical_skill.skill}</strong> — ${lp.most_critical_skill.reason}`;
+                } else {
+                    mostCriticalEl.innerHTML = `<em>None specified.</em>`;
+                }
+
+                if (lp.learning_path && lp.learning_path.length > 0) {
+                    lp.learning_path.forEach(step => {
+                        const div = document.createElement('div');
+                        
+                        let focusHtml = "<ul>";
+                        if (step.focus_areas && step.focus_areas.length > 0) {
+                            step.focus_areas.forEach(fa => focusHtml += `<li>${fa}</li>`);
+                        }
+                        focusHtml += "</ul>";
+
+                        let resourcesHtml = "";
+                        if (step.enhanced_resources && step.enhanced_resources.length > 0) {
+                            resourcesHtml = "<ul>";
+                            step.enhanced_resources.slice(0, 6).forEach(r => {
+                                resourcesHtml += `
+                                    <li>
+                                        <strong>[${r.source}]</strong> <a href="${r.url}" target="_blank">${r.title}</a>
+                                    </li>
+                                `;
+                            });
+                            resourcesHtml += `</ul>`;
+                        } else {
+                            resourcesHtml = "<ul>";
+                            if (step.search_queries && step.search_queries.length > 0) {
+                                step.search_queries.forEach(sq => {
+                                    resourcesHtml += `<li><a href="https://www.google.com/search?q=${encodeURIComponent(sq)}" target="_blank">${sq}</a></li>`;
+                                });
+                            }
+                            resourcesHtml += "</ul>";
+                        }
+
+                        const scoreText = step.score_percentage !== null && step.score_percentage !== undefined 
+                            ? `(Score: ${step.score_percentage}%)` 
+                            : `(Score: Not Assessed)`;
+
+                        div.innerHTML = `
+                            <h4>Step ${step.step}: ${step.skill}</h4>
+                            <p><em>${step.gap_type} — ${step.priority} ${scoreText}</em></p>
+                            <p><strong>Reasoning:</strong> ${step.reason}</p>
+                            <p><strong>Estimated Effort:</strong> ${step.estimated_hours ? step.estimated_hours.min + '-' + step.estimated_hours.max : 'Unknown'} hours</p>
+                            
+                            <strong>Subtopics to Master:</strong>
+                            ${focusHtml}
+                            
+                            <strong>Suggested Resources:</strong>
+                            ${resourcesHtml}
+                            <hr>
+                        `;
+                        stepsEl.appendChild(div);
+                    });
+                } else {
+                    stepsEl.innerHTML = "<p>No required learning steps. You're job ready!</p>";
+                }
+
+                targetContainer.style.display = 'block';
+
+            } catch (err) {
+                alertBox.textContent = 'Error: ' + err.message;
+            }
+        }
+    </script>
+</body>
+</html>
