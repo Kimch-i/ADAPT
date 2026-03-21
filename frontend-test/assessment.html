@@ -359,7 +359,7 @@
                                 if (token && resultsToSave.length > 0) {
                                     scoreDiv.innerHTML += '<br><small>Saving results to database...</small>';
                                     try {
-                                        const submitRes = await fetch('/api/v1/submit', {
+                                        const submitRes = await fetch('http://localhost:3000/api/v1/submit', {
                                             method: 'POST',
                                             headers: {
                                                 'Content-Type': 'application/json',
