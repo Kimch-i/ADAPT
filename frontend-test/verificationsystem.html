@@ -84,7 +84,7 @@
         h1, h2, h3, .headline { font-family: 'Manrope', sans-serif; }
     </style>
 </head>
-<body class="bg-surface text-on-surface antialiased">
+<body class="bg-background text-on-background flex min-h-screen">
     <aside class="h-screen w-64 fixed left-0 top-0 z-50 bg-slate-100 dark:bg-slate-900 shadow-xl dark:shadow-none font-manrope text-sm font-semibold flex flex-col p-4 space-y-2">
         <div class="flex items-center gap-3 px-4 py-6">
             <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white">
@@ -95,23 +95,23 @@
             </div>
         </div>
         <nav class="flex-1 space-y-1">
-            <a class="flex items-center gap-3 px-4 py-3 text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-teal-900 transition-all hover:translate-x-1 duration-200" href="#">
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-teal-900 transition-all hover:translate-x-1 duration-200" href="#">
                 <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
                 <span>Dashboard</span>
             </a>
-            <a class="flex items-center gap-3 px-4 py-3 text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-teal-900 transition-all hover:translate-x-1 duration-200" href="#">
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-white dark:text-slate-400 bg-teal-900 hover:bg-teal-900 hover:text-white dark:hover:bg-teal-900 transition-all translate-x-1 hover:translate-x-1 duration-200" href="#">
                 <span class="material-symbols-outlined" data-icon="cloud_upload">cloud_upload</span>
                 <span>Upload</span>
             </a>
-            <a class="flex items-center gap-3 px-4 py-3 text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-teal-900 transition-all hover:translate-x-1 duration-200" href="#">
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-teal-900 transition-all hover:translate-x-1 duration-200" href="#">
                 <span class="material-symbols-outlined" data-icon="assignment_turned_in">assignment_turned_in</span>
                 <span>Assessments</span>
             </a>
-            <a class="flex items-center gap-3 px-4 py-3 text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-teal-900 transition-all hover:translate-x-1 duration-200" href="#">
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-teal-900 transition-all hover:translate-x-1 duration-200" href="#">
                 <span class="material-symbols-outlined" data-icon="bar_chart">bar_chart</span>
                 <span>Results</span>
             </a>
-            <a class="flex items-center gap-3 px-4 py-3 text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-teal-900 transition-all hover:translate-x-1 duration-200" href="#">
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-teal-900 transition-all hover:translate-x-1 duration-200" href="#">
                 <span class="material-symbols-outlined" data-icon="person">person</span>
                 <span>Profile</span>
             </a>
@@ -128,7 +128,7 @@
         </div>
     </aside>
 
-    <main class="ml-64 min-h-screen flex flex-col">
+    <main class="ml-72 flex-1 flex flex-col min-h-screen">
         <header class="sticky top-0 z-40 w-full flex justify-between items-center px-10 h-20 bg-surface/80 backdrop-blur-md">
             <div class="flex items-center bg-surface-container-high rounded-full px-4 py-2 w-96 group transition-all duration-300 focus-within:bg-surface-container-lowest focus-within:ring-1 focus-within:ring-primary/20">
                 <span class="material-symbols-outlined text-outline group-focus-within:text-primary transition-colors" data-icon="search">search</span>

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Adapt Results - Software Engineer Assessment</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "inverse-primary": "#8ad3d2",
+            "primary-fixed-dim": "#8ad3d2",
+            "tertiary-container": "#7d4726",
+            "background": "#f9f9f9",
+            "inverse-surface": "#2e3131",
+            "on-secondary-fixed-variant": "#324b4b",
+            "surface-container-low": "#f3f4f3",
+            "tertiary": "#613111",
+            "on-primary-fixed": "#002020",
+            "on-tertiary-fixed": "#331200",
+            "tertiary-fixed": "#ffdbc9",
+            "surface-container-highest": "#e2e3e2",
+            "primary-container": "#005f5f",
+            "surface-container": "#edeeee",
+            "on-primary-fixed-variant": "#004f4f",
+            "on-primary": "#ffffff",
+            "on-secondary-container": "#506969",
+            "on-secondary": "#ffffff",
+            "surface-container-high": "#e7e8e8",
+            "error-container": "#ffdad6",
+            "on-tertiary": "#ffffff",
+            "secondary-container": "#cce8e7",
+            "error": "#ba1a1a",
+            "outline-variant": "#bec9c8",
+            "tertiary-fixed-dim": "#ffb68d",
+            "outline": "#6f7979",
+            "on-tertiary-container": "#ffbb95",
+            "on-tertiary-fixed-variant": "#6c391a",
+            "on-secondary-fixed": "#051f20",
+            "surface": "#f9f9f9",
+            "secondary": "#4a6363",
+            "primary": "#004545",
+            "surface-variant": "#e2e3e2",
+            "surface-dim": "#d9dada",
+            "on-surface-variant": "#3f4948",
+            "surface-bright": "#f9f9f9",
+            "on-surface": "#1a1c1c",
+            "on-error": "#ffffff",
+            "surface-tint": "#166969",
+            "surface-container-lowest": "#ffffff",
+            "on-error-container": "#93000a",
+            "on-background": "#1a1c1c",
+            "primary-fixed": "#a6efef",
+            "inverse-on-surface": "#f0f1f0",
+            "secondary-fixed": "#cce8e7"
+          },
+          fontFamily: {
+            "headline": ["Manrope"],
+            "body": ["Inter"],
+            "label": ["Inter"]
+          },
+          borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+        },
+      },
+    }
+  </script>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .radar-grid {
+      background-image: radial-gradient(circle, #bec9c8 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+    body { font-family: 'Inter', sans-serif; }
+    h1, h2, h3, .font-headline { font-family: 'Manrope', sans-serif; }
+  </style>
+</head>
+<body class="bg-background text-on-background flex min-h-screen">
+    <aside class="h-screen w-64 fixed left-0 top-0 z-50 bg-slate-100 dark:bg-slate-900 shadow-xl dark:shadow-none font-manrope text-sm font-semibold flex flex-col p-4 space-y-2">
+        <div class="flex items-center gap-3 px-4 py-6">
+            <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white">
+                <img src="assets/meoew.png" alt="Adapt Icon" class="w-8 h-8 filter brightness-0 invert">
+            </div>
+            <div>
+                <div class="text-xl font-black text-teal-900 dark:text-teal-100 leading-none">ADAPT</div>
+            </div>
+        </div>
+        <nav class="flex-1 space-y-1">
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-teal-900 transition-all hover:translate-x-1 duration-200" href="#">
+                <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                <span>Dashboard</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-teal-900 transition-all hover:translate-x-1 duration-200" href="#">
+                <span class="material-symbols-outlined" data-icon="cloud_upload">cloud_upload</span>
+                <span>Upload</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-teal-900 transition-all hover:translate-x-1 duration-200" href="#">
+                <span class="material-symbols-outlined" data-icon="assignment_turned_in">assignment_turned_in</span>
+                <span>Assessments</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-white dark:text-slate-400 bg-teal-900 hover:bg-teal-900 hover:text-white dark:hover:bg-teal-900 transition-all translate-x-1 hover:translate-x-1 duration-200" href="#">
+                <span class="material-symbols-outlined" data-icon="bar_chart">bar_chart</span>
+                <span>Results</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-teal-900 transition-all hover:translate-x-1 duration-200" href="#">
+                <span class="material-symbols-outlined" data-icon="person">person</span>
+                <span>Profile</span>
+            </a>
+        </nav>
+        <div class="pt-4 border-t border-slate-200 dark:border-slate-800 space-y-1">
+            <a class="flex items-center gap-3 px-4 py-3 text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-slate-700 transition-all hover:translate-x-1 duration-200" href="#">
+                <span class="material-symbols-outlined" data-icon="help">help</span>
+                <span>Support</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-slate-700 transition-all hover:translate-x-1 duration-200" href="#">
+                <span class="material-symbols-outlined" data-icon="logout">logout</span>
+                <span>Sign Out</span>
+            </a>
+        </div>
+    </aside>
+
+  <main class="ml-72 flex-1 flex flex-col min-h-screen">
+    <header class="sticky top-0 z-40 w-full flex justify-between items-center px-10 h-20 bg-surface/80 backdrop-blur-md">
+      <div class="flex items-center bg-surface-container-high rounded-full px-4 py-2 w-96 group transition-all duration-300 focus-within:bg-surface-container-lowest focus-within:ring-1 focus-within:ring-primary/20">
+        <span class="material-symbols-outlined text-outline group-focus-within:text-primary transition-colors" data-icon="search">search</span>
+        <input class="bg-transparent border-none focus:ring-0 text-sm w-full ml-2 text-on-surface font-body" placeholder="Search documentation or assessments..." type="text" />
+      </div>
+      <div class="flex items-center space-x-6">
+        <button class="text-slate-600 hover:text-primary transition-colors">
+          <span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+        </button>
+        <button class="text-slate-600 hover:text-primary transition-colors">
+          <span class="material-symbols-outlined" data-icon="settings">settings</span>
+        </button>
+        <button class="text-slate-600 hover:text-primary transition-colors">
+          <span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+        </button>
+        <div class="h-10 w-10 rounded-full bg-primary-container flex items-center justify-center border-2 border-surface-container-lowest overflow-hidden">
+          <img alt="User profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD98_Wcuqk4be3Pwn_wS5GFeDw0bzlO1Ccg_IyqtF0A-KrmXRBmaVquSuBo9BQrlHP7iOKfz9JudDW_zSwAIVkhwEmdYLjPWUyAMadmJaka0xYVEgSNhRwXsbGStUz2nQ89yjsqZr8O_lMWl9qcA4N7avIohC3g4Le9egcxHQ_agjKyL9lvjvxESfn0eDKYEjO8wPwaXjVkKhTY1Bs2FSKhNvhX88uX3TLk7R56naOEYTAHXYjgsPzuXzWaYftwvMWcD7vLMF430XM" />
+        </div>
+      </div>
+    </header>
+
+    <div class="p-8 space-y-8">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div class="space-y-1">
+          <h1 class="text-4xl font-extrabold text-on-surface tracking-tight font-headline">Software Engineer Assessment</h1>
+          <p class="text-on-surface-variant flex items-center gap-2">
+            <span class="material-symbols-outlined text-sm">calendar_today</span>
+            Completed on March 17, 2026
+          </p>
+        </div>
+        <div class="flex gap-3">
+          <button class="px-6 py-2.5 rounded-full border border-outline text-primary font-bold hover:bg-surface-container-low transition-colors active:scale-95 flex items-center gap-2">
+            <span class="material-symbols-outlined">share</span>
+            Share
+          </button>
+          <button class="px-6 py-2.5 rounded-full bg-primary text-on-primary font-bold hover:bg-primary-container shadow-lg shadow-primary/10 transition-colors active:scale-95 flex items-center gap-2">
+            <span class="material-symbols-outlined">picture_as_pdf</span>
+            Export PDF
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-primary text-on-primary p-8 rounded-xl flex flex-col justify-between relative overflow-hidden group">
+          <div class="absolute -right-4 -top-4 w-24 h-24 bg-primary-container rounded-full opacity-20 group-hover:scale-150 transition-transform duration-500"></div>
+          <span class="text-xs font-bold tracking-widest opacity-80">OVERALL SCORE</span>
+          <div class="flex items-baseline gap-2 mt-4">
+            <span class="text-6xl font-black font-headline tracking-tighter">85.5</span>
+            <span class="text-2xl font-bold opacity-60">%</span>
+          </div>
+          <div class="mt-4 flex items-center gap-2 text-sm">
+            <span class="bg-primary-container text-on-primary-container px-2 py-0.5 rounded text-[10px] font-bold">+2.4%</span>
+            <span class="opacity-70">vs median candidates</span>
+          </div>
+        </div>
+        <div class="bg-surface-container-lowest border border-surface-container-highest p-8 rounded-xl flex flex-col justify-between shadow-sm">
+          <span class="text-xs font-bold tracking-widest text-outline">JOB FIT SCORE</span>
+          <div class="flex items-baseline gap-2 mt-4">
+            <span class="text-6xl font-black font-headline tracking-tighter text-primary">88.5</span>
+            <span class="text-2xl font-bold text-outline">%</span>
+          </div>
+          <div class="mt-4 flex items-center gap-2 text-sm">
+            <div class="h-1.5 flex-1 bg-surface-container-high rounded-full overflow-hidden">
+              <div class="h-full bg-primary rounded-full w-[88.5%]"></div>
+            </div>
+            <span class="font-bold text-primary">Strong Match</span>
+          </div>
+        </div>
+        <div class="bg-surface-container-lowest border border-surface-container-highest p-8 rounded-xl flex flex-col justify-between shadow-sm">
+          <span class="text-xs font-bold tracking-widest text-outline">TIME TAKEN</span>
+          <div class="flex items-baseline gap-2 mt-4">
+            <span class="text-6xl font-black font-headline tracking-tighter text-on-surface">45</span>
+            <span class="text-2xl font-bold text-outline">min</span>
+          </div>
+          <div class="mt-4 flex items-center gap-2 text-sm text-on-surface-variant">
+            <span class="material-symbols-outlined text-sm">timer</span>
+            <span>15m faster than average</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-secondary-container/30 border-l-4 border-primary p-6 rounded-r-xl flex gap-4 items-start">
+        <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">info</span>
+        <div>
+          <h3 class="font-bold text-primary text-lg">Job Fit Analysis</h3>
+          <p class="text-on-secondary-container mt-1 max-w-4xl">Candidate demonstrates exceptional system architecture knowledge and React performance optimization. Core strengths align with Senior Level requirements, specifically in scalable frontend patterns and technical leadership potential.</p>
+        </div>
+      </div>
+
+      <div class="flex gap-8 border-b border-outline-variant pt-4 overflow-x-auto">
+        <button class="pb-4 border-b-2 border-primary text-primary font-bold whitespace-nowrap">Skill Verification</button>
+        <button class="pb-4 border-b-2 border-transparent text-outline font-semibold hover:text-on-surface transition-colors whitespace-nowrap">Skill Gaps</button>
+        <button class="pb-4 border-b-2 border-transparent text-outline font-semibold hover:text-on-surface transition-colors whitespace-nowrap">Learning Path</button>
+        <button class="pb-4 border-b-2 border-transparent text-outline font-semibold hover:text-on-surface transition-colors whitespace-nowrap">Job Recommendations</button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div class="lg:col-span-5 bg-surface-container-lowest rounded-xl p-8 border border-surface-container-highest flex flex-col">
+          <div class="flex justify-between items-center mb-8">
+            <h3 class="font-bold text-xl">Skills Comparison</h3>
+            <span class="material-symbols-outlined text-outline cursor-help">help</span>
+          </div>
+          <div class="flex-1 flex items-center justify-center relative min-h-[300px] radar-grid rounded-full border border-outline-variant/20">
+            <div class="absolute inset-0 flex items-center justify-center">
+              <div class="w-48 h-48 border border-outline-variant rounded-full opacity-20"></div>
+              <div class="w-32 h-32 border border-outline-variant rounded-full opacity-20 absolute"></div>
+              <div class="w-16 h-16 border border-outline-variant rounded-full opacity-20 absolute"></div>
+            </div>
+            <div class="relative z-10 w-full h-full flex items-center justify-center">
+              <svg class="w-full h-full transform -rotate-18" viewbox="0 0 100 100">
+                <polygon fill="none" points="50,10 85,35 75,85 25,85 15,35" stroke="#6f7979" stroke-dasharray="2,2" stroke-width="1"></polygon>
+                <polygon fill="rgba(0, 69, 69, 0.2)" points="50,20 80,40 70,75 30,75 20,40" stroke="#004545" stroke-width="2"></polygon>
+              </svg>
+            </div>
+            <span class="absolute top-4 left-1/2 -translate-x-1/2 text-[10px] font-bold text-outline">Frontend</span>
+            <span class="absolute right-4 top-1/3 text-[10px] font-bold text-outline">Backend</span>
+            <span class="absolute bottom-4 right-1/4 text-[10px] font-bold text-outline">DB</span>
+            <span class="absolute bottom-4 left-1/4 text-[10px] font-bold text-outline">DevOps</span>
+            <span class="absolute left-4 top-1/3 text-[10px] font-bold text-outline">Architecture</span>
+          </div>
+          <div class="mt-8 space-y-3">
+            <div class="flex items-center gap-3">
+              <div class="w-3 h-3 rounded-sm border border-outline border-dashed"></div>
+              <span class="text-sm text-on-surface-variant font-medium">Claimed Proficiency</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-3 h-3 rounded-sm bg-primary/20 border border-primary"></div>
+              <span class="text-sm text-on-surface-variant font-medium">Verified Performance</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-7 space-y-4">
+          <h3 class="font-bold text-xl mb-4">Detailed Skill Breakdown</h3>
+          <div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-5 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 bg-yellow-100 flex items-center justify-center rounded-lg">
+                  <span class="font-black text-yellow-700">JS</span>
+                </div>
+                <div>
+                  <h4 class="font-bold text-on-surface">JavaScript</h4>
+                  <span class="text-xs text-outline font-semibold">ES6+, Asynchronous, Engines</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="bg-secondary-fixed text-on-secondary-fixed text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Valid</span>
+                <span class="material-symbols-outlined text-outline">expand_more</span>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div class="flex justify-between text-xs font-bold text-outline uppercase tracking-widest">
+                <span>Proficiency Level</span>
+                <span class="text-primary">Advanced (92%)</span>
+              </div>
+              <div class="h-2 bg-surface-container-high rounded-full overflow-hidden">
+                <div class="h-full bg-primary rounded-full w-[92%]"></div>
+              </div>
+              <div class="grid grid-cols-3 gap-4 pt-2 border-t border-surface-container-high">
+                <div class="flex flex-col">
+                  <span class="text-[10px] text-outline font-bold uppercase">Verified Exp.</span>
+                  <span class="font-bold text-on-surface">6.2 Years</span>
+                </div>
+                <div class="flex flex-col">
+                  <span class="text-[10px] text-outline font-bold uppercase">Claimed Exp.</span>
+                  <span class="font-bold text-on-surface">7.0 Years</span>
+                </div>
+                <div class="flex flex-col">
+                  <span class="text-[10px] text-outline font-bold uppercase">Confidence</span>
+                  <span class="font-bold text-primary">98%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 bg-teal-100 flex items-center justify-center rounded-lg">
+                  <span class="font-black text-teal-700">R</span>
+                </div>
+                <div>
+                  <h4 class="font-bold text-on-surface">React</h4>
+                  <span class="text-xs text-outline font-semibold">Hooks, Redux, Performance</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="bg-secondary-fixed text-on-secondary-fixed text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Valid</span>
+                <span class="material-symbols-outlined text-outline">expand_more</span>
+              </div>
+            </div>
+          </div>
+          <div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 bg-blue-100 flex items-center justify-center rounded-lg">
+                  <span class="font-black text-blue-700">TS</span>
+                </div>
+                <div>
+                  <h4 class="font-bold text-on-surface">TypeScript</h4>
+                  <span class="text-xs text-outline font-semibold">Generics, Advanced Types</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="bg-secondary-fixed text-on-secondary-fixed text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Valid</span>
+                <span class="material-symbols-outlined text-outline">expand_more</span>
+              </div>
+            </div>
+          </div>
+          <div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 bg-green-100 flex items-center justify-center rounded-lg">
+                  <span class="font-black text-green-700">N</span>
+                </div>
+                <div>
+                  <h4 class="font-bold text-on-surface">Node.js</h4>
+                  <span class="text-xs text-outline font-semibold">Event Loop, Streams</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="bg-tertiary-fixed text-on-tertiary-fixed-variant text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Needs Improvement</span>
+                <span class="material-symbols-outlined text-outline">expand_more</span>
+              </div>
+            </div>
+          </div>
+          <div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 bg-purple-100 flex items-center justify-center rounded-lg">
+                  <span class="font-black text-purple-700">DB</span>
+                </div>
+                <div>
+                  <h4 class="font-bold text-on-surface">SQL</h4>
+                  <span class="text-xs text-outline font-semibold">PostgreSQL, Indexing</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="bg-secondary-fixed text-on-secondary-fixed text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Valid</span>
+                <span class="material-symbols-outlined text-outline">expand_more</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
