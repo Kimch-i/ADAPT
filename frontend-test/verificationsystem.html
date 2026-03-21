@@ -104,16 +104,16 @@
                 <span>Upload</span>
             </a>
             <a class="flex items-center gap-3 px-4 py-3 text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-teal-900 transition-all hover:translate-x-1 duration-200" href="#">
-                <span class="material-symbols-outlined" data-icon="groups">groups</span>
-                <span>Candidates</span>
+                <span class="material-symbols-outlined" data-icon="assignment_turned_in">assignment_turned_in</span>
+                <span>Assessments</span>
             </a>
             <a class="flex items-center gap-3 px-4 py-3 text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-teal-900 transition-all hover:translate-x-1 duration-200" href="#">
-                <span class="material-symbols-outlined" data-icon="account_balance">account_balance</span>
-                <span>Institutions</span>
+                <span class="material-symbols-outlined" data-icon="bar_chart">bar_chart</span>
+                <span>Results</span>
             </a>
             <a class="flex items-center gap-3 px-4 py-3 text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-teal-900 transition-all hover:translate-x-1 duration-200" href="#">
-                <span class="material-symbols-outlined" data-icon="analytics">analytics</span>
-                <span>Reports</span>
+                <span class="material-symbols-outlined" data-icon="person">person</span>
+                <span>Profile</span>
             </a>
         </nav>
         <div class="pt-4 border-t border-slate-200 dark:border-slate-800 space-y-1">
@@ -129,20 +129,23 @@
     </aside>
 
     <main class="ml-64 min-h-screen flex flex-col">
-        <header class="bg-slate-50 dark:bg-slate-950 font-manrope antialiased tracking-tight sticky top-0 z-40">
-            <div class="flex justify-between items-center w-full px-8 py-4">
-                <div class="flex items-center gap-4">
-                    <span class="text-2xl font-bold text-teal-900 dark:text-teal-100 tracking-tighter">Initiate Verification</span>
-                </div>
-                <div class="flex items-center gap-6">
-                    <div class="relative group">
-                        <span class="material-symbols-outlined text-slate-500 cursor-pointer hover:text-teal-600 transition-colors" data-icon="notifications">notifications</span>
-                        <span class="absolute -top-1 -right-1 w-2 h-2 bg-error rounded-full"></span>
-                    </div>
-                    <span class="material-symbols-outlined text-slate-500 cursor-pointer hover:text-teal-600 transition-colors" data-icon="settings">settings</span>
-                    <div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container-high border border-outline-variant">
-                        <img class="w-full h-full object-cover" alt="User profile photo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuATYc5XDTvJK8_x5P88Twpyx-d0fifARbH_NANiocWwvqGAiSTBZtV2dTxHwCB3oFNN5yw1-_55axfgqM9Lbzw7tbDwrHV4Ff3sxyRrR1HlSkEL_x4YRrMcMJqze1JqCa3d0BKUBNMU0jOhbEbgR0nILRxm1QvqM3xPcD-gVUb_vdwNhfCAg7LtgFaYbHw0d0ziTEPefPQK9Gz6wgOA0IX-p4Z_1Mlt2WMtj3n5n9fvzp9YXAS_i7pdz_m64qOcprnVUZSKzPvf0RA" />
-                    </div>
+        <header class="sticky top-0 z-40 w-full flex justify-between items-center px-10 h-20 bg-surface/80 backdrop-blur-md">
+            <div class="flex items-center bg-surface-container-high rounded-full px-4 py-2 w-96 group transition-all duration-300 focus-within:bg-surface-container-lowest focus-within:ring-1 focus-within:ring-primary/20">
+                <span class="material-symbols-outlined text-outline group-focus-within:text-primary transition-colors" data-icon="search">search</span>
+                <input class="bg-transparent border-none focus:ring-0 text-sm w-full ml-2 text-on-surface font-body" placeholder="Search documentation or assessments..." type="text" />
+            </div>
+            <div class="flex items-center space-x-6">
+                <button class="text-slate-600 hover:text-primary transition-colors">
+                <span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+                </button>
+                <button class="text-slate-600 hover:text-primary transition-colors">
+                <span class="material-symbols-outlined" data-icon="settings">settings</span>
+                </button>
+                <button class="text-slate-600 hover:text-primary transition-colors">
+                <span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+                </button>
+                <div class="h-10 w-10 rounded-full bg-primary-container flex items-center justify-center border-2 border-surface-container-lowest overflow-hidden">
+                <img alt="User profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD98_Wcuqk4be3Pwn_wS5GFeDw0bzlO1Ccg_IyqtF0A-KrmXRBmaVquSuBo9BQrlHP7iOKfz9JudDW_zSwAIVkhwEmdYLjPWUyAMadmJaka0xYVEgSNhRwXsbGStUz2nQ89yjsqZr8O_lMWl9qcA4N7avIohC3g4Le9egcxHQ_agjKyL9lvjvxESfn0eDKYEjO8wPwaXjVkKhTY1Bs2FSKhNvhX88uX3TLk7R56naOEYTAHXYjgsPzuXzWaYftwvMWcD7vLMF430XM" />
                 </div>
             </div>
         </header>
@@ -150,6 +153,9 @@
         <div class="flex-1 flex overflow-hidden">
             <div class="flex-1 p-8 space-y-8 overflow-y-auto">
                 <section class="max-w-3xl">
+                    <div class="flex items-center gap-4">
+                        <span class="text-2xl font-bold text-teal-900 dark:text-teal-100 tracking-tighter">Initiate Verification</span>
+                    </div>
                     <p class="text-lg text-on-surface-variant font-body leading-relaxed mb-8">
                         Transform your professional trajectory. Upload your resume to begin our AI-driven sanitization and skill-mapping protocol. Your data is processed with zero-knowledge privacy standards.
                     </p>
