@@ -33,12 +33,20 @@ app.get("/jobs", (req, res) => {
     res.sendFile(path.join(__dirname, 'frontend-test', 'jobs.html'));
 });
 
+app.get("/view-assessment", (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend-test', 'view-assessment.html'));
+});
+
 app.get("/login", (req, res) => {
     res.sendFile(path.join(__dirname, 'frontend-test', 'login.html'));
 });
 
 app.get("/register", (req, res) => {
     res.sendFile(path.join(__dirname, 'frontend-test', 'register.html'));
+});
+
+app.get("/index", (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend-test', 'index.html'));
 });
 
 app.get("/", (req, res) => {
