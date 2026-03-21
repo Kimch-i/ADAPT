@@ -33,7 +33,6 @@ router.post('/extract', authMiddleware, upload.single('resume'), async (req, res
         });
 
         console.log("Parsed resume text length:", rawText.length);
-        console.log(rawText);
 
         res.json({
             success: true,
@@ -43,26 +42,6 @@ router.post('/extract', authMiddleware, upload.single('resume'), async (req, res
     } catch (err) {
         console.error("Resume extraction error:", err);
         res.status(500).json({ success: false, error: "Failed to parse resume: " + err.message });
-    }
-});
-
-
-/**
- * Upload and save a resume file to the database.
- */
-router.post('/upload', authMiddleware, upload.single('resume'), async (req, res) => {
-    if (!req.file) {
-        return res.status(400).send("no file uploaded");
-    }
-
-    try {
-        const query = `INSERT INTO files (user_id, file_name, file_data) VALUES ($1, $2, $3)`;
-        const response = await pool.query(query, [req.user.id, req.file.originalname, req.file.buffer]);
-
-        res.status(201).json(response.rows[0]);
-    } catch (err) {
-        console.error(err);
-        return res.status(401).json({ success: false, error: err });
     }
 });
 

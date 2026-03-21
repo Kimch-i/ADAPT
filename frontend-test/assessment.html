@@ -61,7 +61,6 @@
             <input type="file" id="resume" accept=".pdf,.docx" required>
 
             <button type="submit" id="btn">Upload and Process</button>
-            <button onclick="simulateLogin()">Simulate Login</button>
         </form>
         <p id="status"></p>
     </div>
@@ -84,19 +83,6 @@
         const status = document.getElementById('status');
         const resultContainer = document.getElementById('resultContainer');
 
-        async function simulateLogin() {
-            const response = await fetch('http://localhost:3000/api/v1/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: 'test@email.com', password: 'testpass' })
-            });
-
-            const result = await response.json();
-            if (result.token) {
-                localStorage.setItem('token', result.token);
-                alert('Login successful! Token stored in localStorage.');
-            }
-        }
 
         // Display generated assessment (from assessmentold.html pattern)
         function displayAssessment(data) {
