@@ -19,7 +19,7 @@ router.use(authMiddleware);
 /**
  * Generate a new assessment for a job role and skills.
  */
-router.post('/generate', async (req, res) => {
+router.post('/generate',  async (req, res) => {
     try {
         let { jobTitle, skills, type } = req.body;
         const userId = req.user.id;

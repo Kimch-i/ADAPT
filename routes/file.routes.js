@@ -17,7 +17,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 //upload.single uses the name resume to find what file to use from frontend
 //upload.single is so that we can get req.file.buffer
 router.post('/extract', authMiddleware, upload.single('resume'), (req, res) => {
-    
+    console.log("extract")
     if(!req.file){
         return res.json({success:false, error:"received no file"});
     }

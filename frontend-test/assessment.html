@@ -127,7 +127,7 @@
 
             try {
                 const [claimedRes, targetRes] = await Promise.all([
-                    fetch('http://localhost:3000/api/v1/generate', {
+                    fetch('http:localhost:3000/api/v1/generate', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -135,7 +135,7 @@
                         },
                         body: JSON.stringify({ jobTitle, skills, type: 'claimed' })
                     }),
-                    fetch('http://localhost:3000/api/v1/generate', {
+                    fetch('/api/v1/generate', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -359,7 +359,7 @@
                                 if (token && resultsToSave.length > 0) {
                                     scoreDiv.innerHTML += '<br><small>Saving results to database...</small>';
                                     try {
-                                        const submitRes = await fetch('http://localhost:3000/api/v1/submit', {
+                                        const submitRes = await fetch('/api/v1/submit', {
                                             method: 'POST',
                                             headers: {
                                                 'Content-Type': 'application/json',
@@ -425,7 +425,7 @@
             if (!token) return;
 
             try {
-                const res = await fetch('http://localhost:3000/api/v1/my-results', {
+                const res = await fetch('/api/v1/my-results', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 const data = await res.json();

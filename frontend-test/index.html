@@ -72,7 +72,7 @@
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-
+            
             // 1. Prepare the data
             const fileInput = document.getElementById('resume');
             const jobInput = document.getElementById('job');
@@ -83,7 +83,7 @@
             formData.append("userId", localStorage.getItem('id'));
 
             try {
-                const response = await fetch('http://localhost:3000/api/v1/upload', {
+                const response = await fetch('http://localhost:3000/api/v1/extract', {
                     method: 'POST',
                     body: formData,
                     headers: {
@@ -107,6 +107,7 @@
             } catch (err) {
                 status.style.color = "red";
                 status.innerText = "Error: " + err.message;
+                console.error("Error:", err);
             }
 
 
