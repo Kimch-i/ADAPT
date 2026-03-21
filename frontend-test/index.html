@@ -1,92 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>Resume Upload</title>
     <style>
-        body { font-family: sans-serif; padding: 50px; line-height: 1.5; }
-        .container { max-width: 400px; margin: auto; border: 1px solid #ccc; padding: 20px; border-radius: 8px; }
-        input, button { display: block; width: 100%; margin-bottom: 15px; padding: 10px; box-sizing: border-box; }
-        #status { font-weight: bold; color: #444; }
+        body {
+            font-family: sans-serif;
+            padding: 50px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: auto;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        input,
+        button {
+            display: block;
+            width: 100%;
+            margin-bottom: 15px;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        #status {
+            font-weight: bold;
+            color: #444;
+        }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <h2>Upload Resume</h2>
-    <form id="uploadForm">
+    <div class="container">
+        <h2>Upload Resume</h2>
+        <form id="uploadForm">
 
-        <label for="resume">File (PDF/DOCX):</label>
-        <input type="file" id="resume" accept=".pdf,.docx" required>
+            <label for="resume">File (PDF/DOCX):</label>
+            <input type="file" id="resume" accept=".pdf,.docx" required>
 
-        <button type="submit" id="btn">Upload and Process</button>
-        <button onclick="simulateLogin()">Simulate Login</button>
-    </form>
-    <p id="status"></p>
-</div>
+            <button type="submit" id="btn">Upload and Process</button>
+            <button onclick="simulateLogin()">Simulate Login</button>
+        </form>
+        <p id="status"></p>
+    </div>
 
-<script>
-    const form = document.getElementById('uploadForm');
-    const status = document.getElementById('status');
-
-
-    async function simulateLogin() {
-        // Simulate a login by setting a dummy token in localStorage
-        const response = await fetch('http://localhost:3000/api/v1/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: 'test@email.com', password: 'testpass' })
-        });
-
-        const result = await response.json();
-        if (result.token) {
-            localStorage.setItem('token', result.token);
-            alert('Login successful! Token stored in localStorage.');
-        }
-    }
+    <script>
+        const form = document.getElementById('uploadForm');
+        const status = document.getElementById('status');
 
 
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        // 1. Prepare the data
-        const fileInput = document.getElementById('resume');
-        const jobInput = document.getElementById('job');
-
-        const formData = new FormData();
-        // The key 'resume' MUST match upload.single('resume') in your backend
-        formData.append('resume', fileInput.files[0]);
-        formData.append("userId", localStorage.getItem('id'));
-
-        try {
-            const response = await fetch('http://localhost:3000/api/v1/upload', {
+        async function simulateLogin() {
+            // Simulate a login by setting a dummy token in localStorage
+            const response = await fetch('http://localhost:3000/api/v1/login', {
                 method: 'POST',
-                body: formData,
-                headers: {
-                    "authorization": `Bearer ${localStorage.getItem('token')}`
-                }
-                // IMPORTANT: Do NOT set Content-Type header. 
-                // The browser will automatically set it to multipart/form-data 
-                // with the correct boundary string.
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: 'test@email.com', password: 'testpass' })
             });
 
             const result = await response.json();
-
-            if (response.ok) {
-                status.style.color = "green";
-                status.innerText = "Success! Check server console.";
-                console.log("Server Response:", result);
-            } else {
-                throw new Error(result.error || "Upload failed");
+            if (result.token) {
+                localStorage.setItem('token', result.token);
+                alert('Login successful! Token stored in localStorage.');
             }
-
-        } catch (err) {
-            status.style.color = "red";
-            status.innerText = "Error: " + err.message;
         }
 
 
-    });
-</script>
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // 1. Prepare the data
+            const fileInput = document.getElementById('resume');
+            const jobInput = document.getElementById('job');
+
+            const formData = new FormData();
+            // The key 'resume' MUST match upload.single('resume') in your backend
+            formData.append('resume', fileInput.files[0]);
+            formData.append("userId", localStorage.getItem('id'));
+
+            try {
+                const response = await fetch('http://localhost:3000/api/v1/upload', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        "authorization": `Bearer ${localStorage.getItem('token')}`
+                    }
+                    // IMPORTANT: Do NOT set Content-Type header. 
+                    // The browser will automatically set it to multipart/form-data 
+                    // with the correct boundary string.
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    status.style.color = "green";
+                    status.innerText = "Success! Check server console.";
+                    console.log("Server Response:", result);
+                } else {
+                    throw new Error(result.error || "Upload failed");
+                }
+
+            } catch (err) {
+                status.style.color = "red";
+                status.innerText = "Error: " + err.message;
+            }
+
+
+        });
+    </script>
 
 </body>
+
 </html>
