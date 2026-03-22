@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-dim": "#d8dadb",
+              "on-tertiary-fixed-variant": "#6c391a",
+              "error": "#ba1a1a",
+              "on-tertiary-fixed": "#331200",
+              "on-secondary-container": "#4d6767",
+              "tertiary": "#613111",
+              "surface-container": "#eceeef",
+              "on-error-container": "#93000a",
+              "primary-container": "#005f5f",
+              "on-secondary-fixed": "#041f1f",
+              "background": "#f8fafb",
+              "on-background": "#191c1d",
+              "surface-container-high": "#e6e8e9",
+              "tertiary-fixed-dim": "#ffb68d",
+              "on-primary-fixed": "#002020",
+              "on-tertiary-container": "#ffbb95",
+              "surface-tint": "#166969",
+              "primary": "#004545",
+              "inverse-on-surface": "#eff1f2",
+              "on-surface": "#191c1d",
+              "on-primary-fixed-variant": "#004f4f",
+              "on-primary": "#ffffff",
+              "surface-bright": "#f8fafb",
+              "secondary": "#496363",
+              "surface-container-lowest": "#ffffff",
+              "primary-fixed": "#a6efef",
+              "inverse-primary": "#8ad3d2",
+              "inverse-surface": "#2e3132",
+              "on-primary-container": "#8ed6d6",
+              "secondary-fixed": "#cce8e7",
+              "outline-variant": "#bec9c8",
+              "surface-variant": "#e1e3e4",
+              "secondary-fixed-dim": "#b0cccb",
+              "surface-container-low": "#f2f4f5",
+              "on-surface-variant": "#3f4948",
+              "surface-container-highest": "#e1e3e4",
+              "on-secondary-fixed-variant": "#324b4b",
+              "on-secondary": "#ffffff",
+              "surface": "#f8fafb",
+              "on-tertiary": "#ffffff",
+              "secondary-container": "#c9e5e4",
+              "error-container": "#ffdad6",
+              "primary-fixed-dim": "#8ad3d2",
+              "tertiary-container": "#7d4726",
+              "outline": "#6f7979",
+              "tertiary-fixed": "#ffdbc9",
+              "on-error": "#ffffff"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-surface flex min-h-screen">
+<!-- SideNavBar -->
+<aside class="h-screen w-64 fixed left-0 top-0 z-50 bg-slate-100 dark:bg-slate-900 shadow-xl dark:shadow-none font-manrope text-sm font-semibold flex flex-col p-4 space-y-2">
+<div class="flex items-center gap-3 px-4 py-6">
+<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white">
+<img src="assets/meoew.png" alt="Adapt Icon" class="w-8 h-8 filter brightness-0 invert">
+</div>
+<div>
+<div class="text-xl font-black text-teal-900 dark:text-teal-100 leading-none">ADAPT</div>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-teal-900 transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-teal-900 transition-all hover:translate-x-1 duration-200" href="verificationsystem.html">
+<span class="material-symbols-outlined" data-icon="cloud_upload">cloud_upload</span>
+<span>Upload</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-teal-900 transition-all hover:translate-x-1 duration-200" href="uiassessment.html">
+<span class="material-symbols-outlined" data-icon="assignment_turned_in">assignment_turned_in</span>
+<span>Assessments</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-teal-900 transition-all hover:translate-x-1 duration-200" href="uiresults.html">
+<span class="material-symbols-outlined" data-icon="bar_chart">bar_chart</span>
+<span>Results</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-white dark:text-slate-400 bg-teal-900 hover:bg-teal-900 hover:text-white dark:hover:bg-teal-900 transition-all translate-x-1 hover:translate-x-1 duration-200" href="profile.html">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span>Profile</span>
+</a>
+</nav>
+<div class="pt-4 border-t border-slate-200 dark:border-slate-800 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-slate-700 transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span>Support</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-slate-700 transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span>Sign Out</span>
+</a>
+</div>
+</aside>
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 left-72 h-20 z-40 bg-[#f8fafb]/80 dark:bg-slate-950/80 backdrop-blur-xl shadow-[0_8px_24px_rgba(25,28,29,0.06)] flex items-center justify-between px-8">
+<div class="flex items-center bg-surface-container-low px-4 py-2 rounded-full w-96 focus-within:ring-2 focus-within:ring-[#004545]/20 transition-all">
+<span class="material-symbols-outlined text-on-surface-variant text-xl" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-full ml-2 font-['Inter']" placeholder="Search assessments..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<button class="hover:bg-white/50 dark:hover:bg-white/10 rounded-full p-2 transition-all">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="notifications">notifications</span>
+</button>
+<button class="hover:bg-white/50 dark:hover:bg-white/10 rounded-full p-2 transition-all">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="settings">settings</span>
+</button>
+<div class="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-on-primary font-bold">
+                M
+            </div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-72 pt-20 p-10 min-h-screen flex-1">
+<div class="max-w-6xl mx-auto space-y-10">
+<!-- Hero Profile Section: Asymmetric Layout -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+<div class="lg:col-span-2 flex flex-col md:flex-row items-center md:items-start gap-8 bg-surface-container-lowest p-10 rounded-[2rem] shadow-[0_8px_24px_rgba(25,28,29,0.04)]">
+<div class="w-32 h-32 rounded-[2.5rem] bg-primary flex items-center justify-center text-5xl font-black text-on-primary shadow-lg overflow-hidden relative group">
+<div class="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
+<span class="material-symbols-outlined text-white" data-icon="edit">edit</span>
+</div>
+                        M
+                    </div>
+<div class="flex-1 text-center md:text-left">
+<h1 class="text-4xl font-extrabold tracking-tight text-on-surface mb-1">Mark Randel</h1>
+<p class="text-xl font-semibold text-primary mb-4">Software Engineer</p>
+<div class="flex flex-wrap justify-center md:justify-start gap-4 mb-6">
+<div class="flex items-center gap-2 text-on-surface-variant text-sm">
+<span class="material-symbols-outlined text-lg" data-icon="mail">mail</span>
+                                m.randel@architecture.io
+                            </div>
+<div class="flex items-center gap-2 text-on-surface-variant text-sm">
+<span class="material-symbols-outlined text-lg" data-icon="location_on">location_on</span>
+                                San Francisco, CA
+                            </div>
+<div class="flex items-center gap-2 text-on-surface-variant text-sm">
+<span class="material-symbols-outlined text-lg" data-icon="calendar_today">calendar_today</span>
+                                Joined March 2026
+                            </div>
+</div>
+<div class="flex flex-wrap justify-center md:justify-start gap-2">
+<button class="px-6 py-2.5 bg-primary text-on-primary font-bold rounded-xl text-sm transition-transform active:scale-95 shadow-lg shadow-primary/20">Edit Profile</button>
+<button class="px-6 py-2.5 bg-surface-container-high text-on-surface font-bold rounded-xl text-sm transition-transform active:scale-95">Download CV</button>
+</div>
+</div>
+</div>
+<div class="bg-primary-container text-on-primary-container p-10 rounded-[2rem] flex flex-col justify-between relative overflow-hidden">
+<div class="absolute top-[-20%] right-[-20%] w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
+<div>
+<h3 class="text-on-primary font-headline font-bold text-xl mb-2">Career Goal</h3>
+<p class="text-on-primary-container/90 text-sm leading-relaxed font-body">
+                            Aiming to transition into Lead Engineering roles within the next 18 months. Focusing on architecting distributed systems and mentoring junior developers in React/Node ecosystems.
+                        </p>
+</div>
+<div class="mt-8">
+<div class="flex justify-between items-end mb-2">
+<span class="text-xs font-bold uppercase tracking-widest opacity-70">Target Readiness</span>
+<span class="text-2xl font-black text-on-primary">74%</span>
+</div>
+<div class="h-2 w-full bg-white/20 rounded-full">
+<div class="h-full bg-on-primary rounded-full w-[74%]"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Main Content Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+<!-- Skills Section (Bento Grid Style) -->
+<div class="lg:col-span-2 space-y-6">
+<div class="flex items-center justify-between">
+<h2 class="text-2xl font-extrabold tracking-tight">Verified Skills</h2>
+<button class="text-primary font-bold text-sm flex items-center gap-1 hover:underline">
+                            Take Assessment <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+<!-- Skill Card 1 -->
+<div class="bg-surface-container-lowest p-6 rounded-3xl hover:bg-surface-bright transition-all group border border-transparent hover:border-primary/5 hover:shadow-xl hover:shadow-black/5">
+<div class="flex items-center justify-between mb-4">
+<div class="w-12 h-12 rounded-2xl bg-secondary-container flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="javascript">javascript</span>
+</div>
+<div class="px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
+                                    Verified
+                                </div>
+</div>
+<h4 class="font-bold text-on-surface">JavaScript</h4>
+<p class="text-xs text-on-surface-variant mt-1">Expert Level</p>
+</div>
+<!-- Skill Card 2 -->
+<div class="bg-surface-container-lowest p-6 rounded-3xl hover:bg-surface-bright transition-all group border border-transparent hover:border-primary/5 hover:shadow-xl hover:shadow-black/5">
+<div class="flex items-center justify-between mb-4">
+<div class="w-12 h-12 rounded-2xl bg-secondary-container flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="integration_instructions">integration_instructions</span>
+</div>
+<div class="px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
+                                    Verified
+                                </div>
+</div>
+<h4 class="font-bold text-on-surface">React</h4>
+<p class="text-xs text-on-surface-variant mt-1">Advanced</p>
+</div>
+<!-- Skill Card 3 -->
+<div class="bg-surface-container-lowest p-6 rounded-3xl hover:bg-surface-bright transition-all group border border-transparent hover:border-primary/5 hover:shadow-xl hover:shadow-black/5">
+<div class="flex items-center justify-between mb-4">
+<div class="w-12 h-12 rounded-2xl bg-secondary-container flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="code">code</span>
+</div>
+<div class="px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
+                                    Verified
+                                </div>
+</div>
+<h4 class="font-bold text-on-surface">TypeScript</h4>
+<p class="text-xs text-on-surface-variant mt-1">Advanced</p>
+</div>
+<!-- Skill Card 4 -->
+<div class="bg-surface-container-lowest p-6 rounded-3xl hover:bg-surface-bright transition-all group border border-transparent hover:border-primary/5 hover:shadow-xl hover:shadow-black/5">
+<div class="flex items-center justify-between mb-4">
+<div class="w-12 h-12 rounded-2xl bg-secondary-container flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="developer_board">developer_board</span>
+</div>
+<div class="px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
+                                    Verified
+                                </div>
+</div>
+<h4 class="font-bold text-on-surface">Node.js</h4>
+<p class="text-xs text-on-surface-variant mt-1">Proficient</p>
+</div>
+<!-- Skill Card 5 -->
+<div class="bg-surface-container-lowest p-6 rounded-3xl hover:bg-surface-bright transition-all group border border-transparent hover:border-primary/5 hover:shadow-xl hover:shadow-black/5">
+<div class="flex items-center justify-between mb-4">
+<div class="w-12 h-12 rounded-2xl bg-secondary-container flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="database">database</span>
+</div>
+<div class="px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
+                                    Verified
+                                </div>
+</div>
+<h4 class="font-bold text-on-surface">SQL</h4>
+<p class="text-xs text-on-surface-variant mt-1">Intermediate</p>
+</div>
+<!-- Skill Card 6 -->
+<div class="bg-surface-container-lowest p-6 rounded-3xl hover:bg-surface-bright transition-all group border border-transparent hover:border-primary/5 hover:shadow-xl hover:shadow-black/5">
+<div class="flex items-center justify-between mb-4">
+<div class="w-12 h-12 rounded-2xl bg-secondary-container flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="html">html</span>
+</div>
+<div class="px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
+                                    Verified
+                                </div>
+</div>
+<h4 class="font-bold text-on-surface">HTML/CSS</h4>
+<p class="text-xs text-on-surface-variant mt-1">Expert Level</p>
+</div>
+</div>
+</div>
+<!-- Assessment History -->
+<div class="space-y-6">
+<h2 class="text-2xl font-extrabold tracking-tight">History</h2>
+<div class="bg-surface-container-low rounded-[2rem] p-6 space-y-4">
+<div class="bg-surface-container-lowest p-5 rounded-2xl flex items-center gap-4 group cursor-pointer hover:bg-primary-container/5 transition-colors">
+<div class="w-12 h-12 rounded-xl bg-primary/5 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="assignment_turned_in">assignment_turned_in</span>
+</div>
+<div class="flex-1">
+<h4 class="text-sm font-bold text-on-surface leading-tight">Software Engineer Assessment</h4>
+<p class="text-[10px] font-medium text-on-surface-variant uppercase tracking-tighter mt-1">Completed Feb 20, 2026</p>
+</div>
+<div class="text-right">
+<div class="text-lg font-black text-primary">85.5%</div>
+<p class="text-[10px] text-primary/60 font-bold">Top 5%</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-5 rounded-2xl flex items-center gap-4 opacity-60">
+<div class="w-12 h-12 rounded-xl bg-surface-variant flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="architecture">architecture</span>
+</div>
+<div class="flex-1">
+<h4 class="text-sm font-bold text-on-surface leading-tight">System Design Fundamental</h4>
+<p class="text-[10px] font-medium text-on-surface-variant uppercase tracking-tighter mt-1">Completed Jan 12, 2026</p>
+</div>
+<div class="text-right">
+<div class="text-lg font-black text-on-surface">92.0%</div>
+<p class="text-[10px] text-on-surface-variant font-bold">Top 1%</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-5 rounded-2xl flex items-center gap-4 opacity-60">
+<div class="w-12 h-12 rounded-xl bg-surface-variant flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="storage">storage</span>
+</div>
+<div class="flex-1">
+<h4 class="text-sm font-bold text-on-surface leading-tight">Database Management</h4>
+<p class="text-[10px] font-medium text-on-surface-variant uppercase tracking-tighter mt-1">Completed Dec 05, 2025</p>
+</div>
+<div class="text-right">
+<div class="text-lg font-black text-on-surface">78.4%</div>
+<p class="text-[10px] text-on-surface-variant font-bold">Passed</p>
+</div>
+</div>
+<button class="w-full py-4 text-sm font-bold text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center gap-2">
+                            View All History <span class="material-symbols-outlined text-sm" data-icon="expand_more">expand_more</span>
+</button>
+</div>
+<!-- Recommended Training Ad -->
+<div class="bg-tertiary-fixed text-on-tertiary-fixed p-6 rounded-[2rem] relative overflow-hidden group">
+<div class="relative z-10">
+<h4 class="font-headline font-bold text-lg mb-2">Bridge the Gap</h4>
+<p class="text-xs leading-relaxed opacity-80 mb-4">You're 12% away from the 'Senior Architect' benchmark. Try our curated Cloud patterns course.</p>
+<button class="bg-on-tertiary-fixed text-white px-5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 group-hover:gap-3 transition-all">
+                                View Course <span class="material-symbols-outlined text-sm" data-icon="north_east">north_east</span>
+</button>
+</div>
+<span class="material-symbols-outlined absolute right-[-10px] bottom-[-10px] text-9xl opacity-10 group-hover:scale-110 transition-transform" data-icon="bolt">bolt</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button - Only relevant for Profile edit/updates -->
+<div class="fixed bottom-10 right-10">
+<button class="w-14 h-14 bg-primary text-on-primary rounded-2xl shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all">
+<span class="material-symbols-outlined" data-icon="share">share</span>
+</button>
+</div>
+</body></html>
