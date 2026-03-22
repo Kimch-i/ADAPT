@@ -2,8 +2,8 @@
 -- Please log an issue at https://github.com/pgadmin-org/pgadmin4/issues/new/choose if you find any bugs, including reproduction steps.
 BEGIN;
 
-CREATE TYPE priority_level AS ENUM ('Low', 'Medium', 'High');
-CREATE TYPE question_type AS ENUM ('Multiple Choice', 'True/False', 'Coding', 'Open Ended');
+CREATE TYPE priority_level AS ENUM ('low priority', 'medium priority', 'high priority');
+CREATE TYPE question_type AS ENUM ('multiple_choice', 'true_false', 'code_output', 'fill_blank', 'code_fix', 'scenario');
 
 CREATE TABLE IF NOT EXISTS public.assessments
 (

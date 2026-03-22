@@ -12,13 +12,13 @@ export async function saveAssessmentToDb(userId, assessment, jobTitle) {
             priorityVal = priorityVal.replace('_', ' ');
 
             if (priorityVal.includes('high')) {
-                priorityVal = 'High';
+                priorityVal = 'high priority';
             } else if (priorityVal.includes('medium')) {
-                priorityVal = 'Medium';
+                priorityVal = 'medium priority';
             } else if (priorityVal.includes('low')) {
-                priorityVal = 'Low';
+                priorityVal = 'low priority';
             } else {
-                priorityVal = 'Medium'; // fallback
+                priorityVal = 'medium priority'; // fallback
             }
 
             const assmtRes = await pool.query(
@@ -35,15 +35,17 @@ export async function saveAssessmentToDb(userId, assessment, jobTitle) {
                     let safeType = (q.type || 'multiple_choice').toLowerCase().replace('_', ' ');
 
                     if (safeType.includes('multiple') || safeType.includes('choice')) {
-                        safeType = 'Multiple Choice';
+                        safeType = 'multiple_choice';
                     } else if (safeType.includes('true') || safeType.includes('false') || safeType === 'tf') {
-                        safeType = 'True/False';
+                        safeType = 'true_false';
                     } else if (safeType.includes('coding') || safeType.includes('code')) {
-                        safeType = 'Coding';
-                    } else if (safeType.includes('open') || safeType.includes('ended')) {
-                        safeType = 'Open Ended';
+                        safeType = 'code_output';
+                    } else if (safeType.includes('open') || safeType.includes('ended') || safeType.includes('scenario')) {
+                        safeType = 'scenario';
+                    } else if (safeType.includes('fill') || safeType.includes('blank')) {
+                        safeType = 'fill_blank';
                     } else {
-                        safeType = 'Multiple Choice'; // fallback
+                        safeType = 'multiple_choice'; // fallback
                     }
 
                     const qRes = await pool.query(

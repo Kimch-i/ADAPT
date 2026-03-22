@@ -188,25 +188,25 @@
                     <section class="bg-slate-50/50 rounded-2xl p-8 border border-slate-100">
                         <h3 class="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 mb-8">Verification Protocol Progress</h3>
                         <div class="grid grid-cols-4 gap-4">
-                            <div class="bg-[#0D9488] p-6 rounded-2xl text-white shadow-lg shadow-[#0D9488]/20 flex flex-col items-center text-center">
-                                <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mb-4 font-black text-xl">1</div>
-                                <p class="font-bold text-sm">Upload</p>
-                                <p class="text-[10px] opacity-80 mt-1">Resume file</p>
+                            <div id="step-1" class="bg-white p-6 rounded-2xl border border-slate-100 flex flex-col items-center text-center transition-all duration-300">
+                                <div class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mb-4 font-black text-xl transition-all duration-300 step-icon">1</div>
+                                <p class="font-bold text-sm text-slate-800 step-title transition-all duration-300">Upload</p>
+                                <p class="text-[10px] text-slate-400 mt-1 step-subtext transition-all duration-300">Resume file</p>
                             </div>
-                            <div class="bg-white p-6 rounded-2xl border border-slate-100 flex flex-col items-center text-center">
-                                <div class="w-12 h-12 text-slate-800 flex items-center justify-center mb-4 font-black text-3xl">2</div>
-                                <p class="font-bold text-sm text-slate-800">Extraction</p>
-                                <p class="text-[10px] text-slate-400 mt-1">Skill Parsing</p>
+                            <div id="step-2" class="bg-white p-6 rounded-2xl border border-slate-100 flex flex-col items-center text-center transition-all duration-300">
+                                <div class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mb-4 font-black text-3xl transition-all duration-300 step-icon">2</div>
+                                <p class="font-bold text-sm text-slate-800 step-title transition-all duration-300">Extraction</p>
+                                <p class="text-[10px] text-slate-400 mt-1 step-subtext transition-all duration-300">Skill Parsing</p>
                             </div>
-                            <div class="bg-white p-6 rounded-2xl border border-slate-100 flex flex-col items-center text-center">
-                                <div class="w-12 h-12 text-slate-800 flex items-center justify-center mb-4 font-black text-3xl">3</div>
-                                <p class="font-bold text-sm text-slate-800">Sanitization</p>
-                                <p class="text-[10px] text-slate-400 mt-1">PII Removal</p>
+                            <div id="step-3" class="bg-white p-6 rounded-2xl border border-slate-100 flex flex-col items-center text-center transition-all duration-300">
+                                <div class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mb-4 font-black text-3xl transition-all duration-300 step-icon">3</div>
+                                <p class="font-bold text-sm text-slate-800 step-title transition-all duration-300">Sanitization</p>
+                                <p class="text-[10px] text-slate-400 mt-1 step-subtext transition-all duration-300">PII Removal</p>
                             </div>
-                            <div class="bg-white p-6 rounded-2xl border border-slate-100 flex flex-col items-center text-center">
-                                <div class="w-12 h-12 text-slate-800 flex items-center justify-center mb-4 font-black text-3xl">4</div>
-                                <p class="font-bold text-sm text-slate-800">Assessment</p>
-                                <p class="text-[10px] text-slate-400 mt-1">Ready to start</p>
+                            <div id="step-4" class="bg-white p-6 rounded-2xl border border-slate-100 flex flex-col items-center text-center transition-all duration-300">
+                                <div class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mb-4 font-black text-3xl transition-all duration-300 step-icon">4</div>
+                                <p class="font-bold text-sm text-slate-800 step-title transition-all duration-300">Assessment</p>
+                                <p class="text-[10px] text-slate-400 mt-1 step-subtext transition-all duration-300">Ready to start</p>
                             </div>
                         </div>
                     </section>
@@ -278,6 +278,55 @@
         }
 
 
+        function updateStepStatus(stepNum, status) {
+            const stepEl = document.getElementById(`step-${stepNum}`);
+            if (!stepEl) {
+                console.warn(`Step element step-${stepNum} not found`);
+                return;
+            }
+            
+            const icon = stepEl.querySelector('.step-icon');
+            const title = stepEl.querySelector('.step-title');
+            const subtext = stepEl.querySelector('.step-subtext');
+
+            if (!icon || !title || !subtext) {
+                console.warn(`Missing sub-elements for step-${stepNum}:`, { icon, title, subtext });
+                return;
+            }
+
+            // Reset classes safely
+            stepEl.className = "p-6 rounded-2xl flex flex-col items-center text-center transition-all duration-500 shadow-sm ";
+            icon.className = "w-12 h-12 rounded-full flex items-center justify-center mb-4 font-black transition-all duration-500 step-icon ";
+            title.className = "font-bold text-sm transition-all duration-500 step-title ";
+            subtext.className = "text-[10px] mt-1 transition-all duration-500 step-subtext ";
+
+            if (status === 'active') {
+                stepEl.classList.add('bg-[#0D9488]', 'text-white', 'shadow-[#0D9488]/20', 'scale-105', 'z-10', 'ring-4', 'ring-[#0D9488]/10');
+                icon.classList.add('bg-white/20', 'text-white', 'text-2xl');
+                title.classList.add('text-white');
+                subtext.classList.add('text-white/80');
+            } else if (status === 'completed') {
+                stepEl.classList.add('bg-[#CCFBF1]', 'text-[#0D9488]', 'border', 'border-[#0D9488]/20');
+                icon.classList.add('bg-[#0D9488]', 'text-white', 'text-xl');
+                title.classList.add('text-[#0D9488]');
+                subtext.classList.add('text-[#0D9488]/70');
+                icon.innerHTML = '<span class="material-symbols-outlined text-xl">check</span>';
+            } else if (status === 'error') {
+                stepEl.classList.add('bg-red-50', 'text-red-600', 'border', 'border-red-200');
+                icon.classList.add('bg-red-600', 'text-white', 'text-xl');
+                title.classList.add('text-red-600');
+                subtext.classList.add('text-red-400');
+                icon.innerHTML = '<span class="material-symbols-outlined text-xl">close</span>';
+            } else {
+                // Pending
+                stepEl.classList.add('bg-white', 'text-slate-400', 'border', 'border-slate-100');
+                icon.classList.add('bg-slate-100', 'text-slate-400', 'text-xl');
+                title.classList.add('text-slate-800');
+                subtext.classList.add('text-slate-400');
+                icon.textContent = stepNum; // Reset to number
+            }
+        }
+
         async function uploadAndGenerate(file) {
             if (!file) return;
             if (file.type !== 'application/pdf') {
@@ -287,35 +336,61 @@
 
             const token = window.localStorage.getItem('token') || window.localStorage.getItem('authToken') || window.sessionStorage.getItem('token');
             if (!token) {
-                statusEl.textContent = 'Authorization required: please log in and set a bearer token in localStorage as "token" or "authToken".';
+                statusEl.innerHTML = '<div class="bg-red-50 text-red-600 p-3 rounded-lg flex items-center gap-2"><span class="material-symbols-outlined">warning</span> Authorization required: please log in.</div>';
                 return;
             }
 
-            console.log(file);
-            statusEl.textContent = 'Extracting text from your resume...';
-            
+            // Reset steps
+            [1, 2, 3, 4].forEach(s => {
+                updateStepStatus(s, 'pending');
+            });
+
             try {
+                // 1. UPLOAD
+                updateStepStatus(1, 'active');
+                statusEl.textContent = 'Uploading resume file...';
+                await new Promise(r => setTimeout(r, 800)); // Visual feedback
+                updateStepStatus(1, 'completed');
+
+                // 2. EXTRACTION
+                updateStepStatus(2, 'active');
+                statusEl.textContent = 'Extracting text and parsing skills...';
+                
                 const formData = new FormData();
                 formData.append('resume', file);
-                console.log(formData.get('resume'));
+                
                 const extractResponse = await fetch('http://localhost:3000/api/v1/extract', {
                     method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    },
+                    headers: { 'Authorization': `Bearer ${token}` },
                     body: formData
                 });
 
                 if (!extractResponse.ok) {
                     const err = await extractResponse.json().catch(() => ({}));
+                    updateStepStatus(2, 'error');
                     throw new Error(err.error || 'Failed to extract text.');
                 }
 
                 const extractData = await extractResponse.json();
                 const rawText = extractData.resumeText || '';
-                const sanitizedText = rawText;
-                //insert sanitization logic here, dko pa alam pano iimplement
-                statusEl.textContent = 'Generating assessment from sanitized resume text...';
+                updateStepStatus(2, 'completed');
+
+                // 3. SANITIZATION
+                updateStepStatus(3, 'active');
+                statusEl.textContent = 'Scanning and masking PII (Privacy Protocol)...';
+                
+                // Simple regex based masking
+                await new Promise(r => setTimeout(r, 1500)); // Show some "processing"
+                const sanitizedText = rawText
+                    .replace(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, '[EMAIL MASKED]')
+                    .replace(/\b\d{10,12}\b/g, '[PHONE MASKED]')
+                    .replace(/\b\d{3}-\d{3}-\d{4}\b/g, '[PHONE MASKED]');
+                
+                updateStepStatus(3, 'completed');
+
+                // 4. ASSESSMENT
+                updateStepStatus(4, 'active');
+                statusEl.textContent = 'AI generating tailored assessment...';
 
                 const generateResponse = await fetch('http://localhost:3000/api/v1/generate', {
                     method: 'POST',
@@ -328,20 +403,43 @@
 
                 if (!generateResponse.ok) {
                     const err = await generateResponse.json().catch(() => ({}));
+                    updateStepStatus(4, 'error');
                     throw new Error(err.error || 'Failed to generate assessment.');
                 }
 
                 const generateData = await generateResponse.json();
 
                 if (!generateData.success) {
+                    updateStepStatus(4, 'error');
                     throw new Error(generateData.error || 'Assessment generation failed.');
                 }
 
-                statusEl.innerHTML = `<span class="font-bold">Assessment generated!</span> Job title: <code>${generateData.assessment.job_title}</code>, items: ${generateData.assessment.assessments?.length || 0}`;
+                updateStepStatus(4, 'completed');
+                statusEl.innerHTML = `
+                    <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-2xl flex items-center gap-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                        <div class="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center text-white">
+                            <span class="material-symbols-outlined">auto_fix_high</span>
+                        </div>
+                        <div>
+                            <p class="font-bold text-emerald-900">Assessment Protocol Complete</p>
+                            <p class="text-xs text-emerald-700">Identified Role: <span class="font-black">${generateData.assessment.job_title}</span> • ${generateData.assessment.assessments?.length || 0} skill domains mapped.</p>
+                        </div>
+                    </div>
+                `;
 
             } catch (error) {
                 console.error(error);
-                statusEl.textContent = `Error: ${error.message}`;
+                statusEl.innerHTML = `
+                    <div class="bg-red-50 border border-red-100 p-4 rounded-2xl flex items-center gap-4">
+                        <div class="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center text-white">
+                            <span class="material-symbols-outlined">error</span>
+                        </div>
+                        <div>
+                            <p class="font-bold text-red-900">Protocol Interrupted</p>
+                            <p class="text-xs text-red-700">${error.message}</p>
+                        </div>
+                    </div>
+                `;
             }
         }
 
