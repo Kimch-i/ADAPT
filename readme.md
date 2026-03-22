@@ -62,9 +62,9 @@ JWT_SECRET=<your_jwt_secret>
 
 ## Project Team
 
-- **Project Manager:** [Valderrama, Mark Harold T. | HAU] - Overall project coordination, timeline management, stakeholder communication, and delivery oversight
-- **UI/UX:** [Almanzor, Keith Ryan N. | HAU] - User interface design, user experience research, wireframing, prototyping, and design system management
-- **Front-End:** [Yumul, Randel Angelo L. | HAU, Almanzor, Keith Ryan N. | HAU] - HTML/CSS/JavaScript development, responsive design implementation, frontend testing, and client-side logic
-- **Back-End:** [Sagmit, Herince Ien B. | PSU] - Node.js/Express server development, API endpoint creation, database management, authentication, and server-side business logic
-- **AI/Processing Layer:** [Yabul, Jayebriel S. | PSU] - AI model integration (Groq SDK), prompt engineering, resume parsing, assessment generation, and NLP-driven recommendations
+- **Project Manager:** Valderrama, Mark Harold T. | HAU - Overall project coordination, timeline management, stakeholder communication, and delivery oversight
+- **UI/UX:** Almanzor, Keith Ryan N. | HAU - User interface design, user experience research, wireframing, prototyping, and design system management
+- **Front-End:** Yumul, Randel Angelo L. | HAU, Almanzor, Keith Ryan N. | HAU - HTML/CSS/JavaScript development, responsive design implementation, frontend testing, and client-side logic
+- **Back-End:** Sagmit, Herince Ien B. | PSU - Node.js/Express server development, API endpoint creation, database management, authentication, and server-side business logic
+- **AI/Processing Layer:** Yabul, Jayebriel S. | PSU - AI model integration (Groq SDK), prompt engineering, resume parsing, assessment generation, and NLP-driven recommendations
 
