@@ -168,18 +168,20 @@
                 
                 <main class="flex-1 p-8 pt-4 space-y-10 overflow-y-auto">
                     <section>
-                        <div class="bg-white border-2 border-dashed border-slate-200 rounded-2xl p-12 flex flex-col items-center justify-center text-center transition-all hover:border-[#0D9488]/50 hover:bg-slate-50 group cursor-pointer">
+                        <div id="resume-drop-area" class="bg-white border-2 border-dashed border-slate-200 rounded-2xl p-12 flex flex-col items-center justify-center text-center transition-all hover:border-[#0D9488]/50 hover:bg-slate-50 group cursor-pointer">
                             <div class="w-16 h-16 bg-[#CCFBF1] rounded-full flex items-center justify-center mb-6 text-[#0D9488] group-hover:scale-110 transition-transform duration-300">
                                 <span class="material-symbols-outlined text-3xl">unarchive</span>
                             </div>
                             <h2 class="text-xl font-bold text-slate-800 mb-2">Drop your resume here</h2>
                             <p class="text-slate-500 text-sm max-w-xs mb-8">
-                                Support for PDF and DOCX files. Maximum file size 10MB. <br>
+                                Support for PDF files. Maximum file size 10MB. <br>
                                 <span class="text-[#0D9488] font-bold">Your PII will be automatically sanitized.</span>
                             </p>
-                            <button class="bg-[#004545] text-white px-10 py-3 rounded-full font-bold shadow-lg shadow-[#004545]/20 hover:bg-[#003333] transition-all">
+                            <button id="browse-file-button" class="bg-[#004545] text-white px-10 py-3 rounded-full font-bold shadow-lg shadow-[#004545]/20 hover:bg-[#003333] transition-all" type="button">
                                 Browse Files
                             </button>
+                            <input id="resume-file-input" type="file" accept="application/pdf" class="hidden" />
+                            <p id="resume-status" class="mt-4 text-sm text-slate-500"></p>
                         </div>
                     </section>
 
@@ -255,5 +257,115 @@
             </div>
         </div>
     </main>
+
+    <script>
+        const dropArea = document.getElementById('resume-drop-area');
+        const browseButton = document.getElementById('browse-file-button');
+        const fileInput = document.getElementById('resume-file-input');
+        const statusEl = document.getElementById('resume-status');
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        function highlight() {
+            dropArea.classList.add('border-teal-500', 'bg-slate-50');
+        }
+
+        function unhighlight() {
+            dropArea.classList.remove('border-teal-500', 'bg-slate-50');
+        }
+
+
+        async function uploadAndGenerate(file) {
+            if (!file) return;
+            if (file.type !== 'application/pdf') {
+                statusEl.textContent = 'Please upload a PDF file.';
+                return;
+            }
+
+            const token = window.localStorage.getItem('token') || window.localStorage.getItem('authToken') || window.sessionStorage.getItem('token');
+            if (!token) {
+                statusEl.textContent = 'Authorization required: please log in and set a bearer token in localStorage as "token" or "authToken".';
+                return;
+            }
+
+            console.log(file);
+            statusEl.textContent = 'Extracting text from your resume...';
+            
+            try {
+                const formData = new FormData();
+                formData.append('resume', file);
+                console.log(formData.get('resume'));
+                const extractResponse = await fetch('http://localhost:3000/api/v1/extract', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                if (!extractResponse.ok) {
+                    const err = await extractResponse.json().catch(() => ({}));
+                    throw new Error(err.error || 'Failed to extract text.');
+                }
+
+                const extractData = await extractResponse.json();
+                const rawText = extractData.resumeText || '';
+                const sanitizedText = rawText;
+                //insert sanitization logic here, dko pa alam pano iimplement
+                statusEl.textContent = 'Generating assessment from sanitized resume text...';
+
+                const generateResponse = await fetch('http://localhost:3000/api/v1/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ resumeText: sanitizedText })
+                });
+
+                if (!generateResponse.ok) {
+                    const err = await generateResponse.json().catch(() => ({}));
+                    throw new Error(err.error || 'Failed to generate assessment.');
+                }
+
+                const generateData = await generateResponse.json();
+
+                if (!generateData.success) {
+                    throw new Error(generateData.error || 'Assessment generation failed.');
+                }
+
+                statusEl.innerHTML = `<span class="font-bold">Assessment generated!</span> Job title: <code>${generateData.assessment.job_title}</code>, items: ${generateData.assessment.assessments?.length || 0}`;
+
+            } catch (error) {
+                console.error(error);
+                statusEl.textContent = `Error: ${error.message}`;
+            }
+        }
+
+        browseButton.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', (event) => {
+            if (event.target.files.length > 0) {
+                uploadAndGenerate(event.target.files[0]);
+            }
+        });
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach((eventName) => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
+        });
+
+        dropArea.addEventListener('dragenter', highlight, false);
+        dropArea.addEventListener('dragover', highlight, false);
+        dropArea.addEventListener('dragleave', unhighlight, false);
+        dropArea.addEventListener('drop', (event) => {
+            unhighlight();
+            if (event.dataTransfer.files.length > 0) {
+                uploadAndGenerate(event.dataTransfer.files[0]);
+            }
+        }, false);
+    </script>
 </body>
 </html>

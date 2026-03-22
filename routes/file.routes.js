@@ -1,8 +1,8 @@
 import express from 'express';
 import multer from 'multer';
-import PDFParser from 'pdf2json';
 import authMiddleware from '../middleware/auth.middleware.js';
 import pool from '../db/db.js';
+import { extractTextFromPdfBuffer } from '../src/services/file.service.js';
 
 const router = express.Router();
 
@@ -21,17 +21,8 @@ router.post('/extract', authMiddleware, upload.single('resume'), async (req, res
     }
 
     try {
-        const rawText = await new Promise((resolve, reject) => {
-            const parser = new PDFParser(null, true);
-            parser.on("pdfParser_dataReady", () => {
-                resolve(decodeURIComponent(parser.getRawTextContent()));
-            });
-            parser.on("pdfParser_dataError", (err) => {
-                reject(err);
-            });
-            parser.parseBuffer(req.file.buffer);
-        });
-
+        const rawText = await extractTextFromPdfBuffer(req.file.buffer);
+        console.log("Extracted text:", rawText);
         console.log("Parsed resume text length:", rawText.length);
 
         res.json({

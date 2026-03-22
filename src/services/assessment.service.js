@@ -8,15 +8,17 @@ export async function saveAssessmentToDb(userId, assessment, jobTitle) {
         await pool.query('BEGIN');
         for (const assmnt of assessment.assessments) {
 
-            let priorityVal = String(assmnt.priority).toLowerCase().trim();
+            let priorityVal = String(assmnt.priority || '').toLowerCase().trim();
             priorityVal = priorityVal.replace('_', ' ');
 
-            if (!['high priority', 'medium priority', 'low priority'].includes(priorityVal)) {
-                if (['high', 'medium', 'low'].includes(priorityVal)) {
-                    priorityVal = priorityVal + ' priority';
-                } else {
-                    priorityVal = 'medium priority'; // fallback
-                }
+            if (priorityVal.includes('high')) {
+                priorityVal = 'High';
+            } else if (priorityVal.includes('medium')) {
+                priorityVal = 'Medium';
+            } else if (priorityVal.includes('low')) {
+                priorityVal = 'Low';
+            } else {
+                priorityVal = 'Medium'; // fallback
             }
 
             const assmtRes = await pool.query(
@@ -30,7 +32,19 @@ export async function saveAssessmentToDb(userId, assessment, jobTitle) {
             if (assmnt.questions && Array.isArray(assmnt.questions)) {
                 for (let i = 0; i < assmnt.questions.length; i++) {
                     const q = assmnt.questions[i];
-                    let safeType = (q.type || 'multiple_choice').toLowerCase();
+                    let safeType = (q.type || 'multiple_choice').toLowerCase().replace('_', ' ');
+
+                    if (safeType.includes('multiple') || safeType.includes('choice')) {
+                        safeType = 'Multiple Choice';
+                    } else if (safeType.includes('true') || safeType.includes('false') || safeType === 'tf') {
+                        safeType = 'True/False';
+                    } else if (safeType.includes('coding') || safeType.includes('code')) {
+                        safeType = 'Coding';
+                    } else if (safeType.includes('open') || safeType.includes('ended')) {
+                        safeType = 'Open Ended';
+                    } else {
+                        safeType = 'Multiple Choice'; // fallback
+                    }
 
                     const qRes = await pool.query(
                         `INSERT INTO questions (assessment_id, sequence_num, type, approach, question, code_snippet, correct_answer, explanation)
@@ -63,7 +77,7 @@ export async function saveAssessmentToDb(userId, assessment, jobTitle) {
                                 [qId, label, optStr, isCorrect, q.explanation || '']
                             );
                         }
-                    } else if (safeType === 'true_false') {
+                    } else if (safeType === 'True/False') {
                         const options = ['True', 'False'];
                         for (let j = 0; j < options.length; j++) {
                             const label = String.fromCharCode(65 + j);

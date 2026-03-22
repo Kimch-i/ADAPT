@@ -1,7 +1,9 @@
 import express from 'express';
 import pool from '../db/db.js';
+import multer from 'multer';
 import { generateAssessment, generateLearningPath } from '../src/config/groq.js';
 import { fetchResources } from '../src/config/resources.js';
+import { extractTextFromPdfBuffer } from '../src/services/file.service.js';
 import {
     saveAssessmentToDb,
     getUserResults,
@@ -11,10 +13,42 @@ import {
 } from '../src/services/assessment.service.js';
 import authMiddleware from '../middleware/auth.middleware.js';
 
+const upload = multer({ storage: multer.memoryStorage() });
+
 const router = express.Router();
 
 // Apply auth middleware to all routes
 router.use(authMiddleware);
+
+async function generateFromResumeText(userId, resumeText) {
+    // Fetch job title from user profile
+    const userRes = await pool.query('SELECT preferred_job_title FROM users WHERE id = $1', [userId]);
+    const jobTitle = (userRes.rows.length > 0 && userRes.rows[0].preferred_job_title)
+        ? userRes.rows[0].preferred_job_title
+        : 'Software Developer';
+
+    // Generate both assessment types in parallel
+    const [claimedAssessment, targetAssessment] = await Promise.all([
+        generateAssessment(jobTitle, [], 'claimed', resumeText),
+        generateAssessment(jobTitle, [], 'target', resumeText)
+    ]);
+
+    await saveAssessmentToDb(userId, claimedAssessment, 'Claimed Skill');
+    await saveAssessmentToDb(userId, targetAssessment, jobTitle);
+
+    const allAssessments = [];
+    if (claimedAssessment.assessments && Array.isArray(claimedAssessment.assessments)) {
+        allAssessments.push(...claimedAssessment.assessments);
+    }
+    if (targetAssessment.assessments && Array.isArray(targetAssessment.assessments)) {
+        allAssessments.push(...targetAssessment.assessments);
+    }
+
+    return {
+        job_title: jobTitle,
+        assessments: allAssessments
+    };
+}
 
 /**
  * Generate both claimed and target assessments from resume text.
@@ -25,45 +59,37 @@ router.post('/generate', async (req, res) => {
         const userId = req.user.id;
 
         if (!resumeText) {
-            return res.status(400).json({ error: "Missing resumeText" });
+            return res.status(400).json({ error: 'Missing resumeText' });
         }
 
-        // Fetch job title from user profile
-        const userRes = await pool.query('SELECT preferred_job_title FROM users WHERE id = $1', [userId]);
-        const jobTitle = (userRes.rows.length > 0 && userRes.rows[0].preferred_job_title)
-            ? userRes.rows[0].preferred_job_title
-            : 'Software Developer';
-
-        // Generate both assessment types in parallel
-        const [claimedAssessment, targetAssessment] = await Promise.all([
-            generateAssessment(jobTitle, [], 'claimed', resumeText),
-            generateAssessment(jobTitle, [], 'target', resumeText)
-        ]);
-
-        // Save both to DB
-        await saveAssessmentToDb(userId, claimedAssessment, "Claimed Skill");
-        await saveAssessmentToDb(userId, targetAssessment, jobTitle);
-
-        // Merge assessments into one response
-        const allAssessments = [];
-        if (claimedAssessment.assessments && Array.isArray(claimedAssessment.assessments)) {
-            allAssessments.push(...claimedAssessment.assessments);
-        }
-        if (targetAssessment.assessments && Array.isArray(targetAssessment.assessments)) {
-            allAssessments.push(...targetAssessment.assessments);
-        }
-
-        res.json({
-            success: true,
-            assessment: {
-                job_title: jobTitle,
-                assessments: allAssessments
-            }
-        });
+        const assessment = await generateFromResumeText(userId, resumeText);
+        res.json({ success: true, assessment });
 
     } catch (err) {
-        console.error("Error generating assessment:", err);
-        res.status(500).json({ error: "Failed to generate assessment" });
+        console.error('Error generating assessment:', err);
+        res.status(500).json({ error: 'Failed to generate assessment' });
+    }
+});
+
+router.post('/generate-from-file', upload.single('resume'), async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'No resume file provided' });
+        }
+
+        const userId = req.user.id;
+        const resumeText = await extractTextFromPdfBuffer(req.file.buffer);
+
+        if (!resumeText || !resumeText.trim().length) {
+            return res.status(400).json({ error: 'Unable to extract text from resume file' });
+        }
+
+        const assessment = await generateFromResumeText(userId, resumeText);
+        res.json({ success: true, assessment });
+
+    } catch (err) {
+        console.error('Error generating assessment from file:', err);
+        res.status(500).json({ error: 'Failed to generate assessment from resume file' });
     }
 });
 
