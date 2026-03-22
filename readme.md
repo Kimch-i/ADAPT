@@ -48,17 +48,97 @@ The PostgreSQL database consists of several relational tables designed to manage
 - **user_results:** Tracks individual answers, correctness, and scores
 - **learning_paths & resources:** Houses the recommended courses, platforms, and step-by-step guides for upskilling
 
-## Environment Setup
+## Project Structure
 
-Create a `.env` file in the root directory with the following variables:
+```text
+├── db/
+│   └── db.js                   # Database connection and configuration
+├── frontend-test/
+│   ├── assets/
+│   │   └── meoew.png           # Static images/assets
+│   ├── assessment.html         # Assessment interface
+│   ├── dashboard.html          # User dashboard
+│   ├── index.html              # Main entry point (Frontend)
+│   ├── jobs.html               # Job listings page
+│   ├── landing.html            # Landing/Welcome page
+│   ├── login.html              # Login interface
+│   ├── profile.html            # User profile page
+│   ├── results.html            # Assessment results view
+│   ├── signin.html             # Registration/Sign-in page
+│   ├── uiassessment.html       # UI-specific assessment
+│   ├── uiresults.html          # UI-specific results
+│   ├── verificationsystem.html # Verification logic/UI
+│   └── view-assessment.html    # Review completed assessments
+├── middleware/
+│   └── auth.middleware.js      # Authentication & Authorization logic
+├── routes/
+│   ├── account.routes.js       # Express routes for user accounts
+│   ├── assessment.routes.js    # Express routes for assessments
+│   └── file.routes.js          # Express routes for file handling
+├── src/
+│   ├── config/
+│   │   ├── groq.js             # Groq SDK configuration
+│   │   ├── groq_prompt_... .md # Markdown templates for AI prompting
+│   │   └── resources.js        # Static resource definitions
+│   └── services/
+│       ├── assessment.service.js # Business logic for assessments
+│       ├── file.service.js       # Business logic for file processing
+│       └── job-listings.js       # Logic for fetching/managing jobs
+├── .gitignore                  # Files to exclude from Git
+├── index.js                    # Main server entry point (Backend)
+├── package.json                # Project dependencies and scripts
+├── pgtableschema.sql           # PostgreSQL database schema
+└── readme.md                   # Project documentation
 
-```
+## Getting Started (Quick Setup)
+
+### Step 1: Get API Keys
+Contact the project owner to request the following private API keys:
+- **GROQ_API_KEY** — Required for AI assessment generation
+- **DB_PASSWORD** — PostgreSQL database password
+
+### Step 2: Create Environment File
+Create a `.env` file in the root directory and add:
+
+```env
 PORT=3000
-DB_USER=<your_db_user>
-DB_HOST=<your_db_host>
-DB_NAME=<your_db_name>
-JWT_SECRET=<your_jwt_secret>
+DB_USER=postgres
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=adapt_db
+DB_PASSWORD=<REQUEST_FROM_OWNER>
+JWT_SECRET=<REQUEST_FROM_OWNER>
+GROQ_API_KEY=<REQUEST_FROM_OWNER>
 ```
+
+### Step 3: Install & Run
+```bash
+npm install
+npm start
+```
+
+### Step 4: Test the System
+1. Open your browser
+2. Go to: `http://localhost:3000/frontend-test/login.html`
+3. Create a new account or use test credentials
+4. Follow the system prompts to test the assessment workflow
+
+That's it! You're ready to explore ADAPT.
+
+## Environment Variables Reference
+
+For detailed information about environment variables:
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `PORT` | Server port | `3000` |
+| `DB_USER` | PostgreSQL username | `postgres` |
+| `DB_HOST` | Database host | `localhost` |
+| `DB_PORT` | Database port | `5432` |
+| `DB_NAME` | Database name | `adapt_db` |
+| `DB_PASSWORD` | Database password | `*request from owner*` |
+| `JWT_SECRET` | Secret key for tokens | `*request from owner*` |
+| `GROQ_API_KEY` | Groq AI API key | `*request from owner*` |
 
 ## Project Team
 
@@ -66,5 +146,5 @@ JWT_SECRET=<your_jwt_secret>
 - **UI/UX:** Almanzor, Keith Ryan N. | HAU - User interface design, user experience research, wireframing, prototyping, and design system management
 - **Front-End:** Yumul, Randel Angelo L. | HAU, Almanzor, Keith Ryan N. | HAU - HTML/CSS/JavaScript development, responsive design implementation, frontend testing, and client-side logic
 - **Back-End:** Sagmit, Herince Ien B. | PSU - Node.js/Express server development, API endpoint creation, database management, authentication, and server-side business logic
-- **AI/Processing Layer:** Yabul, Jayebriel S. | PSU - AI model integration (Groq SDK), prompt engineering, resume parsing, assessment generation, and NLP-driven recommendations
+- **AI/Processing Layer:** Yabut, Jayebriel S. | PSU - AI model integration (Groq SDK), prompt engineering, resume parsing, assessment generation, and NLP-driven recommendations
 
