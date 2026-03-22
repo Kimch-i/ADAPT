@@ -7,6 +7,7 @@ import { extractTextFromPdfBuffer } from '../src/services/file.service.js';
 import {
     saveAssessmentToDb,
     getUserResults,
+    getLatestAssessmentScore,
     getAssessmentById,
     submitUserResults,
     getLearningPathSourceData
@@ -20,21 +21,29 @@ const router = express.Router();
 // Apply auth middleware to all routes
 router.use(authMiddleware);
 
-async function generateFromResumeText(userId, resumeText) {
-    // Fetch job title from user profile
-    const userRes = await pool.query('SELECT preferred_job_title FROM users WHERE id = $1', [userId]);
-    const jobTitle = (userRes.rows.length > 0 && userRes.rows[0].preferred_job_title)
-        ? userRes.rows[0].preferred_job_title
-        : 'Software Developer';
+async function generateFromResumeText(userId, resumeText, targetPosition, skillFocus) {
+    // Fetch job title from user profile if not provided
+    let jobTitle = targetPosition;
+    if (!jobTitle) {
+        const userRes = await pool.query('SELECT preferred_job_title FROM users WHERE id = $1', [userId]);
+        jobTitle = (userRes.rows.length > 0 && userRes.rows[0].preferred_job_title)
+            ? userRes.rows[0].preferred_job_title
+            : 'Software Developer';
+    } else {
+        // Update user's preferred job title if they provided a new one
+        await pool.query('UPDATE users SET preferred_job_title = $1 WHERE id = $2', [jobTitle, userId]);
+    }
+    
+    const skills = skillFocus || [];
 
     // Generate both assessment types in parallel
     const [claimedAssessment, targetAssessment] = await Promise.all([
-        generateAssessment(jobTitle, [], 'claimed', resumeText),
+        generateAssessment(jobTitle, skills, 'claimed', resumeText),
         generateAssessment(jobTitle, [], 'target', resumeText)
     ]);
 
-    await saveAssessmentToDb(userId, claimedAssessment, 'Claimed Skill');
-    await saveAssessmentToDb(userId, targetAssessment, jobTitle);
+    const claimedIds = await saveAssessmentToDb(userId, claimedAssessment, jobTitle);
+    const targetIds = await saveAssessmentToDb(userId, targetAssessment, jobTitle);
 
     const allAssessments = [];
     if (claimedAssessment.assessments && Array.isArray(claimedAssessment.assessments)) {
@@ -46,6 +55,7 @@ async function generateFromResumeText(userId, resumeText) {
 
     return {
         job_title: jobTitle,
+        assessment_ids: [...(claimedIds || []), ...(targetIds || [])],
         assessments: allAssessments
     };
 }
@@ -55,14 +65,14 @@ async function generateFromResumeText(userId, resumeText) {
  */
 router.post('/generate', async (req, res) => {
     try {
-        const { resumeText } = req.body;
+        const { resumeText, targetPosition, skillFocus } = req.body;
         const userId = req.user.id;
 
         if (!resumeText) {
             return res.status(400).json({ error: 'Missing resumeText' });
         }
 
-        const assessment = await generateFromResumeText(userId, resumeText);
+        const assessment = await generateFromResumeText(userId, resumeText, targetPosition, skillFocus);
         res.json({ success: true, assessment });
 
     } catch (err) {
@@ -90,6 +100,37 @@ router.post('/generate-from-file', upload.single('resume'), async (req, res) => 
     } catch (err) {
         console.error('Error generating assessment from file:', err);
         res.status(500).json({ error: 'Failed to generate assessment from resume file' });
+    }
+});
+
+
+// Get the Overall Score of the latest completed assessment directly from user_results
+router.get('/latest-score', async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const score = await getLatestAssessmentScore(userId);
+        if (!score) {
+            return res.json({ success: true, score: null, message: 'No results found' });
+        }
+        const overallPct = parseInt(score.total_answered) > 0
+            ? Math.round((parseInt(score.correct_answers) / parseInt(score.total_answered)) * 100)
+            : 0;
+        res.json({
+            success: true,
+            score: {
+                assessment_id: score.assessment_id,
+                skill: score.skill,
+                job_title: score.job_title,
+                created_at: score.created_at,
+                correct_answers: parseInt(score.correct_answers),
+                total_answered: parseInt(score.total_answered),
+                total_questions: parseInt(score.total_questions),
+                overall_pct: overallPct
+            }
+        });
+    } catch (err) {
+        console.error('Error fetching latest score:', err);
+        res.status(500).json({ error: 'Failed to fetch latest score' });
     }
 });
 

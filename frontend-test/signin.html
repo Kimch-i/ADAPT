@@ -98,11 +98,13 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const registerForm = document.getElementById('registerForm');
-            //const errorMsg = document.getElementById('error-msg');
+            const errorMsg = document.getElementById('error-msg');
 
             registerForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                //errorMsg.innerText = '';
+                errorMsg.innerText = '';
+                errorMsg.classList.add('hidden');
+
                 const payload = {
                     full_name: document.getElementById('full_name').value,
                     email: document.getElementById('email').value,
@@ -121,11 +123,13 @@
                     const data = await response.json();
                     if (data.success) {
                         localStorage.setItem('token', data.token);
+                        window.location.href = 'dashboard.html';
                     } else {
                         throw new Error(data.error || data.message || 'Registration failed');
                     }
                 } catch (err) {
                     errorMsg.innerText = err.message;
+                    errorMsg.classList.remove('hidden');
                 }
             });
         });
@@ -205,6 +209,8 @@
                     <span class="text-xs font-bold text-outline uppercase tracking-widest">or register manually</span>
                     <div class="flex-grow h-[1px] bg-outline-variant/30"></div>
                 </div>
+
+                <div id="error-msg" class="hidden mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-xl text-sm font-medium"></div>
 
                 <form class="space-y-5" id="registerForm">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">

@@ -6,6 +6,7 @@ import pool from '../../db/db.js';
 export async function saveAssessmentToDb(userId, assessment, jobTitle) {
     try {
         await pool.query('BEGIN');
+        const createdIds = [];
         for (const assmnt of assessment.assessments) {
 
             let priorityVal = String(assmnt.priority || '').toLowerCase().trim();
@@ -28,6 +29,7 @@ export async function saveAssessmentToDb(userId, assessment, jobTitle) {
             );
 
             const assessmentId = assmtRes.rows[0].id;
+            createdIds.push(assessmentId);
 
             if (assmnt.questions && Array.isArray(assmnt.questions)) {
                 for (let i = 0; i < assmnt.questions.length; i++) {
@@ -79,7 +81,7 @@ export async function saveAssessmentToDb(userId, assessment, jobTitle) {
                                 [qId, label, optStr, isCorrect, q.explanation || '']
                             );
                         }
-                    } else if (safeType === 'True/False') {
+                    } else if (safeType === 'true_false') {
                         const options = ['True', 'False'];
                         for (let j = 0; j < options.length; j++) {
                             const label = String.fromCharCode(65 + j);
@@ -96,6 +98,7 @@ export async function saveAssessmentToDb(userId, assessment, jobTitle) {
             }
         }
         await pool.query('COMMIT');
+        return createdIds;
     } catch (dbErr) {
         await pool.query('ROLLBACK');
         console.error("Database error during assessment storage:", dbErr);
@@ -115,13 +118,49 @@ export async function getUserResults(userId) {
             COALESCE(SUM(ur.score), 0) as correct_answers
         FROM assessments a
         LEFT JOIN questions q ON a.id = q.assessment_id
-        LEFT JOIN user_results ur ON q.id = ur.question_id AND ur.user_id = a.user_id
+        LEFT JOIN user_results ur ON q.id = ur.question_id AND ur.user_id = $1 AND ur.assessment_id = a.id
         WHERE a.user_id = $1
         GROUP BY a.id
         ORDER BY a.created_at DESC
     `;
     const result = await pool.query(query, [userId]);
     return result.rows;
+}
+
+/**
+ * Fetches the overall score of the most recently answered assessment directly from user_results.
+ */
+export async function getLatestAssessmentScore(userId) {
+    // Step 1: Find the assessment_id of the most recently answered question
+    const latestRes = await pool.query(
+        `SELECT assessment_id FROM user_results 
+         WHERE user_id = $1 AND assessment_id IS NOT NULL
+         ORDER BY answered_at DESC LIMIT 1`,
+        [userId]
+    );
+
+    if (latestRes.rows.length === 0) return null;
+    const latestAssessmentId = latestRes.rows[0].assessment_id;
+
+    // Step 2: Aggregate all answers for that assessment (no JOIN to questions to avoid cartesian product)
+    const scoreRes = await pool.query(
+        `SELECT 
+            ur.assessment_id,
+            a.skill,
+            a.job_title,
+            a.created_at,
+            COUNT(ur.id) as total_answered,
+            COALESCE(SUM(CASE WHEN ur.is_correct THEN 1 ELSE 0 END), 0) as correct_answers,
+            (SELECT COUNT(*) FROM questions q WHERE q.assessment_id = $2) as total_questions
+         FROM user_results ur
+         JOIN assessments a ON a.id = ur.assessment_id
+         WHERE ur.user_id = $1 AND ur.assessment_id = $2
+         GROUP BY ur.assessment_id, a.skill, a.job_title, a.created_at`,
+        [userId, latestAssessmentId]
+    );
+
+    if (scoreRes.rows.length === 0) return null;
+    return scoreRes.rows[0];
 }
 
 /**
@@ -147,9 +186,19 @@ export async function getAssessmentById(id, userId) {
             'SELECT * FROM question_options WHERE question_id = $1 ORDER BY label',
             [q.id]
         );
+        
+        // Fetch existing result for this user/question
+        const resultRes = await pool.query(
+            'SELECT selected_option FROM user_results WHERE user_id = $1 AND question_id = $2',
+            [userId, q.id]
+        );
+        
+        const existingAnswer = resultRes.rows.length > 0 ? resultRes.rows[0].selected_option : null;
+
         return {
             ...q,
-            options: optionsRes.rows.map(o => o.content)
+            options: optionsRes.rows.map(o => o.content),
+            existingAnswer
         };
     }));
 
@@ -165,10 +214,21 @@ export async function submitUserResults(userId, results) {
         let totalScore = 0;
 
         for (const r of results) {
+            const cleanSelected = String(r.selected_option || '').trim();
+
+            // Resolve assessment_id: use provided one, or look it up from the question
+            let assessmentId = r.assessment_id || null;
+            if (!assessmentId) {
+                const qLookup = await pool.query('SELECT assessment_id FROM questions WHERE id = $1', [r.question_id]);
+                if (qLookup.rows.length > 0) {
+                    assessmentId = qLookup.rows[0].assessment_id;
+                }
+            }
+
             // 1. Verify if the option is correct by querying question_options
             const optionsRes = await pool.query(
                 'SELECT is_correct FROM question_options WHERE question_id = $1 AND content = $2',
-                [r.question_id, r.selected_option]
+                [r.question_id, cleanSelected]
             );
 
             let isCorrect = false;
@@ -178,23 +238,27 @@ export async function submitUserResults(userId, results) {
                 // For non-multiple-choice (e.g. text fill), fall back to checking the question's correct_answer
                 const qRes = await pool.query('SELECT correct_answer FROM questions WHERE id = $1', [r.question_id]);
                 if (qRes.rows.length > 0) {
-                    const cleanAns = String(r.selected_option || '').toLowerCase().trim();
+                    const cleanAns = cleanSelected.toLowerCase();
                     const cleanCor = String(qRes.rows[0].correct_answer || '').toLowerCase().trim();
-                    isCorrect = (cleanAns === cleanCor); // Simple text match
+                    // More lenient match: if either contains the other, or exact match
+                    isCorrect = (cleanAns === cleanCor) || 
+                                (cleanCor.length > 3 && cleanAns.includes(cleanCor)) || 
+                                (cleanAns.length > 3 && cleanCor.includes(cleanAns));
                 }
             }
 
             if (isCorrect) totalScore++;
 
             await pool.query(
-                `INSERT INTO user_results (user_id, question_id, selected_option, is_correct, score)
-                 VALUES ($1, $2, $3, $4, $5)
+                `INSERT INTO user_results (user_id, assessment_id, question_id, selected_option, is_correct, score)
+                 VALUES ($1, $2, $3, $4, $5, $6)
                  ON CONFLICT (user_id, question_id) 
-                 DO UPDATE SET selected_option = EXCLUDED.selected_option, 
+                 DO UPDATE SET assessment_id = EXCLUDED.assessment_id,
+                                selected_option = EXCLUDED.selected_option, 
                                is_correct = EXCLUDED.is_correct, 
                                score = EXCLUDED.score,
                                answered_at = now()`,
-                [userId, r.question_id, r.selected_option, isCorrect, isCorrect ? 1 : 0]
+                [userId, assessmentId, r.question_id, cleanSelected, isCorrect, isCorrect ? 1 : 0]
             );
         }
         await pool.query('COMMIT');

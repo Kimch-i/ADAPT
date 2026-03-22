@@ -91,6 +91,280 @@
       activeBtn.classList.add('bg-primary', 'text-on-primary', 'font-bold', 'shadow-sm');
       activeBtn.classList.remove('text-outline', 'font-semibold', 'hover:bg-surface-container-high', 'hover:text-on-surface');
     }
+
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+
+    async function loadResults() {
+      try {
+        // Fetch the latest assessment score directly from user_results
+        const [scoreResponse, resultsResponse] = await Promise.all([
+          fetch('http://localhost:3000/api/v1/latest-score', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          }),
+          fetch('http://localhost:3000/api/v1/my-results', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          })
+        ]);
+
+        const scoreData = await scoreResponse.json();
+        const data = await resultsResponse.json();
+
+        if (data.success && data.results.length > 0) {
+          renderResults(data.results, scoreData.success ? scoreData.score : null);
+          loadRecommendations();
+          loadLearningPath();
+          renderSkillGaps(data.results);
+        } else {
+          document.getElementById('latest-skill-name').textContent = "No Assessments Found";
+          document.getElementById('latest-date').textContent = "Please complete an assessment first.";
+        }
+      } catch (err) {
+        console.error("Results load error:", err);
+      }
+    }
+
+    async function loadRecommendations() {
+      try {
+        const response = await fetch('http://localhost:3000/api/v1/recommendations', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+        if (data.success) {
+          renderRecommendations(data.recommendations);
+        }
+      } catch (err) {
+        console.error("Recommendations load error:", err);
+      }
+    }
+
+    function renderRecommendations(recos) {
+      const container = document.querySelector('#content-job-reco .space-y-6');
+      if (!container) return;
+      container.innerHTML = '';
+      
+      recos.forEach(job => {
+        const div = document.createElement('div');
+        div.className = "bg-surface-container-lowest border border-surface-container-highest rounded-2xl p-6 shadow-sm";
+        div.innerHTML = `
+          <div class="flex justify-between items-start mb-4">
+            <div>
+              <div class="flex items-center gap-3 mb-1">
+                <h3 class="font-headline font-bold text-xl text-on-surface">${job.title}</h3>
+                <span class="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">${job.match_score} match</span>
+              </div>
+              <p class="text-xs text-outline font-medium">${job.company} • ${job.location}</p>
+            </div>
+          </div>
+          <p class="text-sm text-on-surface-variant leading-relaxed mb-6">Based on your verified expertise, you are a strong match for this position.</p>
+          <div class="flex gap-3">
+            <button class="px-4 py-2 text-xs font-bold border border-outline rounded-lg hover:bg-surface-container-low transition-colors">View Details</button>
+            <button class="px-4 py-2 text-xs font-bold bg-black text-white rounded-lg flex items-center gap-2 hover:bg-slate-800 transition-colors">
+              Apply Now <span class="material-symbols-outlined text-xs">open_in_new</span>
+            </button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    async function loadLearningPath() {
+      try {
+        const response = await fetch('http://localhost:3000/api/v1/generate-learning-path', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+        if (data.success) {
+          renderLearningPath(data.learningPath);
+        }
+      } catch (err) {
+        console.error("Learning path load error:", err);
+      }
+    }
+
+    function renderLearningPath(path) {
+      const container = document.querySelector('#content-learning-path .space-y-6');
+      if (!container) return;
+      container.innerHTML = '';
+      
+      if (path.steps && Array.isArray(path.steps)) {
+        path.steps.forEach((step, i) => {
+          const div = document.createElement('div');
+          div.className = "bg-surface-container-lowest border border-surface-container-highest rounded-2xl p-6 shadow-sm";
+          div.innerHTML = `
+            <div class="flex items-start gap-4 mb-6">
+              <div class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold shrink-0">${i + 1}</div>
+              <div>
+                <h3 class="font-headline font-bold text-xl text-on-surface">${step.title}</h3>
+                <p class="text-xs font-semibold text-outline uppercase tracking-wider mt-1">${step.description}</p>
+              </div>
+            </div>
+            <div class="space-y-3">
+              ${(step.resources || []).slice(0, 2).map(r => `
+                <div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl border border-outline-variant/20 hover:border-primary/30 transition-colors group">
+                  <div class="flex items-center gap-4">
+                    <span class="material-symbols-outlined text-outline group-hover:text-primary">open_in_new</span>
+                    <div>
+                      <h4 class="text-sm font-bold text-on-surface">${r.title}</h4>
+                      <p class="text-xs text-outline">${r.source || 'Online Resource'}</p>
+                    </div>
+                  </div>
+                  <a href="${r.url}" target="_blank" class="text-xs font-bold text-primary hover:underline">View</a>
+                </div>
+              `).join('')}
+            </div>
+          `;
+          container.appendChild(div);
+        });
+      }
+    }
+
+    function renderSkillGaps(results) {
+      const container = document.querySelector('#content-skill-gaps .space-y-4');
+      if (!container) return;
+      container.innerHTML = '';
+      
+      const gaps = results.filter(res => {
+        const score = Math.round((parseInt(res.correct_answers) / parseInt(res.total_questions)) * 100);
+        return score < 85; 
+      });
+
+      if (gaps.length === 0) {
+        container.innerHTML = '<p class="text-on-surface-variant font-medium text-center py-10 bg-surface-container-low rounded-xl">No significant skill gaps identified! Keep up the great work.</p>';
+        return;
+      }
+
+      gaps.forEach(gap => {
+        const score = Math.round((parseInt(gap.correct_answers) / parseInt(gap.total_questions)) * 100);
+        const div = document.createElement('div');
+        div.className = "bg-surface-container-lowest p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow group border border-surface-container-highest";
+        div.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-6">
+            <div class="flex items-center gap-5 min-w-[240px]">
+              <div class="w-12 h-12 rounded-lg bg-surface-container-high flex items-center justify-center group-hover:bg-primary-container/10 transition-colors">
+                <span class="material-symbols-outlined text-primary">analytics</span>
+              </div>
+              <div>
+                <h4 class="font-headline font-bold text-lg text-on-surface">${gap.skill}</h4>
+                <div class="flex items-center gap-2 mt-1">
+                  <span class="text-xs font-bold px-2 py-0.5 bg-secondary-fixed text-on-secondary-fixed rounded-full uppercase">Priority</span>
+                  <span class="text-xs text-on-surface-variant">4-8 weeks est.</span>
+                </div>
+              </div>
+            </div>
+            <div class="flex-1 min-w-[300px]">
+              <div class="flex justify-between text-xs font-bold mb-2 uppercase tracking-tighter">
+                <span class="text-on-surface-variant">Current (${score}%)</span>
+                <span class="text-primary">Advanced (Target)</span>
+              </div>
+              <div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+                <div class="h-full bg-primary rounded-full" style="width: ${score}%;"></div>
+              </div>
+            </div>
+            <button class="flex items-center gap-2 text-primary font-bold text-sm hover:underline" onclick="switchTab('learning-path')">
+              View Materials
+              <span class="material-symbols-outlined text-sm">arrow_forward</span>
+            </button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function renderResults(results, latestScore) {
+      if (!results || results.length === 0) return;
+
+      // Calculate Aggregate Score across all assessments
+      let totalCorrect = 0;
+      let totalQuestions = 0;
+      results.forEach(res => {
+        totalCorrect += parseInt(res.correct_answers) || 0;
+        totalQuestions += parseInt(res.answered_questions) || 0;
+      });
+      const aggregatePct = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
+
+      // === HERO CARD: use the aggregate data ===
+      let heroTitle = "Overall Performance";
+      let heroDate = `Aggregated from ${results.length} assessment${results.length > 1 ? 's' : ''}`;
+      let heroOverall = `${aggregatePct}%`;
+      let heroCount = `${totalCorrect} of ${totalQuestions} total items`;
+      let heroFit = aggregatePct; 
+
+      document.getElementById('latest-skill-name').textContent = heroTitle;
+      document.getElementById('latest-date').textContent = heroDate;
+      const jobFitEl = document.getElementById('latest-job-fit-description');
+      if (jobFitEl) {
+          if (heroFit >= 85) {
+              jobFitEl.textContent = `Excellent overall performance! Your verified proficiency across multiple technical domains demonstrates a high level of architecture-level expertise.`;
+          } else if (heroFit >= 60) {
+              jobFitEl.textContent = `Strong technical foundation. Your aggregate results show solid knowledge across your core skills, with specific growth opportunities identified.`;
+          } else {
+              jobFitEl.textContent = `Developing technical profile. Continuing with targeted assessments and learning paths will help strengthen your overall match for senior roles.`;
+          }
+      }
+      document.getElementById('latest-overall-score').textContent = heroOverall;
+      document.getElementById('latest-score-count').textContent = heroCount;
+
+      document.getElementById('latest-job-fit-score').textContent = `${heroFit}%`;
+      document.getElementById('latest-job-fit-status').textContent = heroFit > 80 ? "High overall competency" : heroFit > 50 ? "Moderate overall alignment" : "Developing overall foundation";
+      document.getElementById('latest-job-fit-description').textContent = `Your aggregate verification score of ${heroFit}% reflects your comprehensive technical readiness for target positions.`;
+
+      // Detailed Breakdown List (Still show individual skills)
+      const listContainer = document.getElementById('skill-breakdown-list');
+      listContainer.innerHTML = '<h3 class="font-bold text-xl mb-4">Detailed Skill Breakdown</h3>';
+      
+      // Show all assessments, not just the session ones
+      results.forEach(res => {
+        const resScore = Math.round((parseInt(res.correct_answers) / parseInt(res.answered_questions)) * 100) || 0;
+        const skillShort = res.skill.substring(0, 2).toUpperCase();
+        
+        const item = document.createElement('div');
+        item.className = "bg-surface-container-lowest border border-surface-container-highest rounded-xl p-5 shadow-sm";
+        item.innerHTML = `
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-4">
+              <div class="w-10 h-10 bg-primary/10 flex items-center justify-center rounded-lg">
+                <span class="font-black text-primary">${skillShort}</span>
+              </div>
+              <div>
+                <h4 class="font-bold text-on-surface">${res.skill}</h4>
+                <span class="text-xs text-outline font-semibold">${res.job_title}</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="bg-secondary-fixed text-on-secondary-fixed text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">${resScore > 70 ? 'Valid' : 'Review Needed'}</span>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div class="flex justify-between text-xs font-bold text-outline uppercase tracking-widest">
+              <span>Proficiency Level</span>
+              <span class="text-primary">${resScore > 80 ? 'Advanced' : resScore > 50 ? 'Intermediate' : 'Beginner'} (${resScore}%)</span>
+            </div>
+            <div class="h-2 bg-surface-container-high rounded-full overflow-hidden">
+              <div class="h-full bg-primary rounded-full" style="width: ${resScore}%"></div>
+            </div>
+          </div>
+        `;
+        listContainer.appendChild(item);
+      });
+    }
+
+    if (token) {
+      document.addEventListener('DOMContentLoaded', loadResults);
+    } else {
+      window.location.href = 'login.html';
+      // Sign out functionality
+      const signOutBtn = document.getElementById('sign-out-btn');
+      if (signOutBtn) {
+        signOutBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          localStorage.removeItem('token');
+          localStorage.removeItem('authToken');
+          sessionStorage.removeItem('token');
+          window.location.href = 'login.html';
+        });
+      }
+    }
   </script>
   <style>
     .material-symbols-outlined {
@@ -123,7 +397,7 @@
                 <span class="material-symbols-outlined" data-icon="cloud_upload">cloud_upload</span>
                 <span>Upload</span>
             </a>
-            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-teal-900 transition-all hover:translate-x-1 duration-200" href="uiassessment.html">
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-teal-900 transition-all hover:translate-x-1 duration-200" href="uiassessments-list.html">
                 <span class="material-symbols-outlined" data-icon="assignment_turned_in">assignment_turned_in</span>
                 <span>Assessments</span>
             </a>
@@ -141,7 +415,7 @@
                 <span class="material-symbols-outlined" data-icon="help">help</span>
                 <span>Support</span>
             </a>
-            <a class="flex items-center gap-3 px-4 py-3 text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-slate-700 transition-all hover:translate-x-1 duration-200" href="#">
+            <a id="sign-out-btn" class="flex items-center gap-3 px-4 py-3 text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-slate-700 transition-all hover:translate-x-1 duration-200" href="#">
                 <span class="material-symbols-outlined" data-icon="logout">logout</span>
                 <span>Sign Out</span>
             </a>
@@ -173,10 +447,10 @@
     <div class="p-8 space-y-8">
       <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div class="space-y-1">
-          <h1 class="text-4xl font-extrabold text-on-surface tracking-tight font-headline">Software Engineer Assessment</h1>
+          <h1 id="latest-skill-name" class="text-4xl font-extrabold text-on-surface tracking-tight font-headline">Technical Assessment Results</h1>
           <p class="text-on-surface-variant flex items-center gap-2">
             <span class="material-symbols-outlined text-sm">calendar_today</span>
-            Completed on March 17, 2026
+            <span id="latest-date">Loading...</span>
           </p>
         </div>
         <div class="flex gap-3">
@@ -198,9 +472,9 @@
           <div class="relative z-10">
             <p class="text-[10px] font-black uppercase tracking-[0.2em] opacity-80 mb-2">Overall Score</p>
             <div class="flex items-baseline gap-1">
-              <h2 class="text-5xl font-headline font-black tracking-tighter">85.5%</h2>
+              <h2 id="latest-overall-score" class="text-5xl font-headline font-black tracking-tighter">--%</h2>
             </div>
-            <p class="text-xs font-medium mt-2 opacity-90">17 of 20 correct</p>
+            <p id="latest-score-count" class="text-xs font-medium mt-2 opacity-90">Calculating...</p>
           </div>
         </div>
 
@@ -209,15 +483,15 @@
           
           <div class="relative z-10">
             <p class="text-[10px] font-black uppercase tracking-[0.2em] opacity-80 mb-2">Job Fit Score</p>
-            <h2 class="text-5xl font-headline font-black tracking-tighter">88.5%</h2>
-            <p class="text-xs font-medium mt-2 opacity-90">Strong match for this role</p>
+            <h2 id="latest-job-fit-score" class="text-5xl font-headline font-black tracking-tighter">--%</h2>
+            <p id="latest-job-fit-status" class="text-xs font-medium mt-2 opacity-90">Analyzing fit...</p>
           </div>
         </div>
 
         <div class="bg-white p-7 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-center">
           <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2">Time Taken</p>
           <div class="flex items-baseline gap-2">
-            <h2 class="text-5xl font-headline font-black text-[#004545] tracking-tighter">45</h2>
+            <h2 id="latest-time-taken" class="text-5xl font-headline font-black text-[#004545] tracking-tighter">--</h2>
             <span class="text-slate-500 font-bold text-sm">minutes</span>
           </div>
         </div>
@@ -230,8 +504,8 @@
         
         <div class="flex-1">
           <h3 class="font-headline font-black text-[#004545] text-sm mb-0.5">Job Fit Analysis</h3>
-          <p class="text-[13px] text-slate-600 leading-relaxed">
-            Strong match for Software Engineer role. Excellent JavaScript and React skills with minor areas for improvement in TypeScript and backend development.
+          <p id="latest-job-fit-description" class="text-[13px] text-slate-600 leading-relaxed">
+            Analyzing your assessment results to provide specialized career insights...
           </p>
         </div>
       </div>
@@ -334,115 +608,12 @@
               </div>
             </div>
 
-            <div class="lg:col-span-7 space-y-4">
+            <div id="skill-breakdown-list" class="lg:col-span-7 space-y-4">
               <h3 class="font-bold text-xl mb-4">Detailed Skill Breakdown</h3>
-              <div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-5 shadow-sm">
-                <div class="flex items-center justify-between mb-4">
-                  <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 bg-yellow-100 flex items-center justify-center rounded-lg">
-                      <span class="font-black text-yellow-700">JS</span>
-                    </div>
-                    <div>
-                      <h4 class="font-bold text-on-surface">JavaScript</h4>
-                      <span class="text-xs text-outline font-semibold">ES6+, Asynchronous, Engines</span>
-                    </div>
-                  </div>
-                  <div class="flex items-center gap-3">
-                    <span class="bg-secondary-fixed text-on-secondary-fixed text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Valid</span>
-                    <span class="material-symbols-outlined text-outline">expand_more</span>
-                  </div>
-                </div>
-                <div class="space-y-4">
-                  <div class="flex justify-between text-xs font-bold text-outline uppercase tracking-widest">
-                    <span>Proficiency Level</span>
-                    <span class="text-primary">Advanced (92%)</span>
-                  </div>
-                  <div class="h-2 bg-surface-container-high rounded-full overflow-hidden">
-                    <div class="h-full bg-primary rounded-full w-[92%]"></div>
-                  </div>
-                  <div class="grid grid-cols-3 gap-4 pt-2 border-t border-surface-container-high">
-                    <div class="flex flex-col">
-                      <span class="text-[10px] text-outline font-bold uppercase">Verified Exp.</span>
-                      <span class="font-bold text-on-surface">6.2 Years</span>
-                    </div>
-                    <div class="flex flex-col">
-                      <span class="text-[10px] text-outline font-bold uppercase">Claimed Exp.</span>
-                      <span class="font-bold text-on-surface">7.0 Years</span>
-                    </div>
-                    <div class="flex flex-col">
-                      <span class="text-[10px] text-outline font-bold uppercase">Confidence</span>
-                      <span class="font-bold text-primary">98%</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-5 shadow-sm">
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 bg-teal-100 flex items-center justify-center rounded-lg">
-                      <span class="font-black text-teal-700">R</span>
-                    </div>
-                    <div>
-                      <h4 class="font-bold text-on-surface">React</h4>
-                      <span class="text-xs text-outline font-semibold">Hooks, Redux, Performance</span>
-                    </div>
-                  </div>
-                  <div class="flex items-center gap-3">
-                    <span class="bg-secondary-fixed text-on-secondary-fixed text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Valid</span>
-                    <span class="material-symbols-outlined text-outline">expand_more</span>
-                  </div>
-                </div>
-              </div>
-              <div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-5 shadow-sm">
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 bg-blue-100 flex items-center justify-center rounded-lg">
-                      <span class="font-black text-blue-700">TS</span>
-                    </div>
-                    <div>
-                      <h4 class="font-bold text-on-surface">TypeScript</h4>
-                      <span class="text-xs text-outline font-semibold">Generics, Advanced Types</span>
-                    </div>
-                  </div>
-                  <div class="flex items-center gap-3">
-                    <span class="bg-secondary-fixed text-on-secondary-fixed text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Valid</span>
-                    <span class="material-symbols-outlined text-outline">expand_more</span>
-                  </div>
-                </div>
-              </div>
-              <div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-5 shadow-sm">
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 bg-green-100 flex items-center justify-center rounded-lg">
-                      <span class="font-black text-green-700">N</span>
-                    </div>
-                    <div>
-                      <h4 class="font-bold text-on-surface">Node.js</h4>
-                      <span class="text-xs text-outline font-semibold">Event Loop, Streams</span>
-                    </div>
-                  </div>
-                  <div class="flex items-center gap-3">
-                    <span class="bg-tertiary-fixed text-on-tertiary-fixed-variant text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Needs Improvement</span>
-                    <span class="material-symbols-outlined text-outline">expand_more</span>
-                  </div>
-                </div>
-              </div>
-              <div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-5 shadow-sm">
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 bg-purple-100 flex items-center justify-center rounded-lg">
-                      <span class="font-black text-purple-700">DB</span>
-                    </div>
-                    <div>
-                      <h4 class="font-bold text-on-surface">SQL</h4>
-                      <span class="text-xs text-outline font-semibold">PostgreSQL, Indexing</span>
-                    </div>
-                  </div>
-                  <div class="flex items-center gap-3">
-                    <span class="bg-secondary-fixed text-on-secondary-fixed text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Valid</span>
-                    <span class="material-symbols-outlined text-outline">expand_more</span>
-                  </div>
-                </div>
+              <!-- Skeleton items or dynamic list will go here -->
+              <div class="animate-pulse space-y-4">
+                <div class="h-24 bg-slate-100 rounded-xl"></div>
+                <div class="h-24 bg-slate-100 rounded-xl"></div>
               </div>
             </div>
           </div>

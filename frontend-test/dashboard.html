@@ -100,7 +100,7 @@
 <span class="material-symbols-outlined" data-icon="cloud_upload">cloud_upload</span>
 <span>Upload</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-teal-900 transition-all hover:translate-x-1 duration-200" href="uiassessment.html">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-teal-900 transition-all hover:translate-x-1 duration-200" href="uiassessments-list.html">
 <span class="material-symbols-outlined" data-icon="assignment_turned_in">assignment_turned_in</span>
 <span>Assessments</span>
 </a>
@@ -118,10 +118,19 @@
 <span class="material-symbols-outlined" data-icon="help">help</span>
 <span>Support</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-slate-700 transition-all hover:translate-x-1 duration-200" href="#">
+<a id="sign-out-btn" class="flex items-center gap-3 px-4 py-3 text-teal-900 dark:text-slate-400 hover:bg-teal-900 hover:text-white dark:hover:bg-slate-700 transition-all hover:translate-x-1 duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="logout">logout</span>
 <span>Sign Out</span>
 </a>
+<script>
+    document.getElementById('sign-out-btn').addEventListener('click', (e) => {
+        e.preventDefault();
+        localStorage.removeItem('token');
+        localStorage.removeItem('authToken');
+        sessionStorage.removeItem('token');
+        window.location.href = 'login.html';
+    });
+</script>
 </div>
 </aside>
 <!-- Main Content Canvas -->
@@ -143,10 +152,10 @@
 <span class="material-symbols-outlined" data-icon="verified">verified</span>
 </div>
 </div>
-<div class="text-5xl font-black text-on-surface mb-2">0</div>
+<div id="verified-skills-count" class="text-5xl font-black text-on-surface mb-2">0</div>
 <div class="flex items-center gap-1 text-on-surface-variant text-sm font-medium">
 <span class="material-symbols-outlined text-sm" data-icon="trending_up">trending_up</span>
-                    0% growth this month
+                    <span id="verified-growth-text">0% growth this month</span>
                 </div>
 </div>
 <!-- Assessments Card -->
@@ -157,8 +166,8 @@
 <span class="material-symbols-outlined" data-icon="assignment">assignment</span>
 </div>
 </div>
-<div class="text-5xl font-black text-on-surface mb-2">0</div>
-<div class="text-on-surface-variant text-sm font-medium">Ready to start first test</div>
+<div id="assessments-count" class="text-5xl font-black text-on-surface mb-2">0</div>
+<div id="assessments-status" class="text-on-surface-variant text-sm font-medium">Ready to start first test</div>
 </div>
 <!-- Job Fit Score Card -->
 <div class="bg-primary p-8 rounded-xl shadow-[0_8px_24px_rgba(0,69,69,0.12)] text-on-primary relative overflow-hidden group">
@@ -171,8 +180,8 @@
 <span class="material-symbols-outlined text-white" data-icon="stars">stars</span>
 </div>
 </div>
-<div class="text-5xl font-black mb-2">-</div>
-<div class="text-primary-fixed text-sm font-medium">Upload resume for analysis</div>
+<div id="job-fit-score" class="text-5xl font-black mb-2">-</div>
+<div id="job-fit-status" class="text-primary-fixed text-sm font-medium">Upload resume for analysis</div>
 </div>
 </div>
 </div>
@@ -265,7 +274,69 @@
 </div>
 </main>
 <!-- Floating Action Button (FAB) -->
-<button class="fixed bottom-10 right-10 h-16 w-16 rounded-full bg-primary-container text-white shadow-2xl flex items-center justify-center group active:scale-90 transition-all z-50">
+<button onclick="window.location.href='verificationsystem.html'" class="fixed bottom-10 right-10 h-16 w-16 rounded-full bg-primary-container text-white shadow-2xl flex items-center justify-center group active:scale-90 transition-all z-50">
 <span class="material-symbols-outlined text-3xl transition-transform group-hover:rotate-12" data-icon="add" style="font-variation-settings: 'FILL' 1;">add</span>
 </button>
+
+<script>
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    
+    async function loadDashboardStats() {
+        try {
+            const response = await fetch('http://localhost:3000/api/v1/my-results', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await response.json();
+            
+            if (data.success && data.results) {
+                const total = data.results.length;
+                const completed = data.results.filter(r => parseInt(r.answered_questions) >= parseInt(r.total_questions)).length;
+                
+                document.getElementById('assessments-count').textContent = total;
+                document.getElementById('assessments-status').textContent = total > 0 
+                    ? `${completed} of ${total} assessments completed`
+                    : "Ready to start first test";
+                
+                document.getElementById('verified-skills-count').textContent = completed;
+                document.getElementById('verified-growth-text').textContent = completed > 0 
+                    ? "Skills verified and ready" 
+                    : "Complete assessments to verify skills";
+
+                // Update Stepper
+                if (total > 0) {
+                    const step2Label = document.querySelector('h3:contains("Take Skills Assessment")').parentElement.querySelector('span');
+                    if (step2Label) {
+                        step2Label.className = "inline-flex items-center px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-semibold";
+                        step2Label.innerHTML = '<span class="material-symbols-outlined text-[10px] mr-1">check_circle</span> Step 1 Complete';
+                    }
+                }
+            }
+            
+            const scoreRes = await fetch('http://localhost:3000/api/v1/latest-score', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const scoreData = await scoreRes.json();
+            if (scoreData.success && scoreData.score) {
+                const score = Math.round((scoreData.score.correct_answers / scoreData.score.total_questions) * 100);
+                document.getElementById('job-fit-score').textContent = score + '%';
+                document.getElementById('job-fit-status').textContent = "Latest match score";
+            }
+
+        } catch (err) {
+            console.error("Dashboard stats error:", err);
+        }
+    }
+
+    // Helper for finding text in elements since :contains isn't standard JS
+    function findElementByText(selector, text) {
+        const elements = document.querySelectorAll(selector);
+        return Array.from(elements).find(el => el.textContent.includes(text));
+    }
+
+    if (token) {
+        loadDashboardStats();
+    } else {
+        window.location.href = 'login.html';
+    }
+</script>
 </body></html>

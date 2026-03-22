@@ -84,13 +84,15 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const loginForm = document.getElementById('loginForm');
-            //const errorMsg = document.getElementById('error-msg');
+            const errorMsg = document.getElementById('error-msg');
 
             loginForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
+                errorMsg.innerText = '';
+                errorMsg.classList.add('hidden');
+
                 const email = document.getElementById('email').value;
                 const password = document.getElementById('password').value;
-                //errorMsg.innerText = '';
 
                 try {
                     const response = await fetch('http://localhost:3000/api/v1/login', {
@@ -100,7 +102,6 @@
                     });
                     
                     const data = await response.json();
-                    console.log(data);
                     if (data.success) {
                         localStorage.setItem('token', data.token);
                         window.location.href = 'dashboard.html';
@@ -109,7 +110,8 @@
                     }
                 } catch (err) {
                     console.error('Login error:', err);
-                    //errorMsg.innerText = err.message;
+                    errorMsg.innerText = err.message;
+                    errorMsg.classList.remove('hidden');
                 }
             });
         });
@@ -209,6 +211,8 @@
                     <span class="flex-shrink mx-4 text-xs font-bold tracking-widest text-outline uppercase">Or Continue With Email</span>
                     <div class="flex-grow border-t border-outline-variant opacity-30"></div>
                 </div>
+
+                <div id="error-msg" class="hidden mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-xl text-sm font-medium"></div>
 
                 <form class="space-y-6" id="loginForm">
                     <div class="space-y-2">
