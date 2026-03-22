@@ -2,8 +2,11 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import pool from '../db/db.js';
+import authMiddleware from '../middleware/auth.middleware.js';
 
 const router = express.Router();
+
+// Apply auth middleware to all routes
 
 
 router.post('/login', async (req, res) => {
@@ -61,6 +64,34 @@ router.post('/register', async (req,res)=>{
         res.status(500).json({ success: false, error: `Registration failed: ${err.message} ` });
     }
 });
+// Get user profile
+router.get('/profile', authMiddleware, async (req, res) => {
+    console.log("Fetching user profile for ID:", req.user.id);
+    try {
+        const userId = req.user.id;
+        const result = await pool.query(
+            'SELECT id, full_name, email, location, preferred_job_title, created_at FROM users WHERE id = $1',
+            [userId]
+        );
 
+        if (result.rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
 
+        const user = result.rows[0];
+        res.json({
+            success: true,
+            profile: {
+                id: user.id,
+                full_name: user.full_name,
+                email: user.email,
+                location: user.location,
+                preferred_job_title: user.preferred_job_title,
+                joined_date: user.created_at
+            }
+        });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
 export default router

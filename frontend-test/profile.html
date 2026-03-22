@@ -135,20 +135,20 @@
                         M
                     </div>
 <div class="flex-1 text-center md:text-left">
-<h1 class="text-4xl font-extrabold tracking-tight text-on-surface mb-1">Mark Randel</h1>
-<p class="text-xl font-semibold text-primary mb-4">Software Engineer</p>
+<h1 id="profile-name" class="text-4xl font-extrabold tracking-tight text-on-surface mb-1"></h1>
+<p id="profile-job-title" class="text-xl font-semibold text-primary mb-4"></p>
 <div class="flex flex-wrap justify-center md:justify-start gap-4 mb-6">
 <div class="flex items-center gap-2 text-on-surface-variant text-sm">
 <span class="material-symbols-outlined text-lg" data-icon="mail">mail</span>
-                                m.randel@architecture.io
+<span id="profile-email"></span>
                             </div>
 <div class="flex items-center gap-2 text-on-surface-variant text-sm">
 <span class="material-symbols-outlined text-lg" data-icon="location_on">location_on</span>
-                                San Francisco, CA
+<span id="profile-location"></span>
                             </div>
 <div class="flex items-center gap-2 text-on-surface-variant text-sm">
 <span class="material-symbols-outlined text-lg" data-icon="calendar_today">calendar_today</span>
-                                Joined March 2026
+<span id="profile-join-date"></span>
                             </div>
 </div>
 <div class="flex flex-wrap justify-center md:justify-start gap-2">
@@ -161,8 +161,7 @@
 <div class="absolute top-[-20%] right-[-20%] w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
 <div>
 <h3 class="text-on-primary font-headline font-bold text-xl mb-2">Career Goal</h3>
-<p class="text-on-primary-container/90 text-sm leading-relaxed font-body">
-                            Aiming to transition into Lead Engineering roles within the next 18 months. Focusing on architecting distributed systems and mentoring junior developers in React/Node ecosystems.
+<p id="profile-career-goal" class="text-on-primary-container/90 text-sm leading-relaxed font-body">
                         </p>
 </div>
 <div class="mt-8">
@@ -341,4 +340,100 @@
 <span class="material-symbols-outlined" data-icon="share">share</span>
 </button>
 </div>
+
+<script>
+    // Function to fetch and populate user profile data
+    async function loadUserProfile() {
+        const token = localStorage.getItem('token') || localStorage.getItem('authToken') || sessionStorage.getItem('token');
+
+        if (!token) {
+            console.error('No authentication token found');
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:3000/api/v1/profile', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch profile data');
+            }
+
+            const data = await response.json();
+
+            if (data.success && data.profile) {
+                populateProfileData(data.profile);
+            } else {
+                console.error('Profile data not found');
+            }
+        } catch (error) {
+            console.error('Error loading profile:', error);
+        }
+    }
+
+    // Function to populate profile data into the UI
+    function populateProfileData(profile) {
+        // Update name
+        const nameElement = document.getElementById('profile-name');
+        if (nameElement && profile.full_name) {
+            nameElement.textContent = profile.full_name;
+        }
+
+        // Update job title
+        const jobTitleElement = document.getElementById('profile-job-title');
+        if (jobTitleElement && profile.preferred_job_title) {
+            jobTitleElement.textContent = profile.preferred_job_title;
+        }
+
+        // Update email
+        const emailSpan = document.getElementById('profile-email');
+        if (emailSpan && profile.email) {
+            emailSpan.textContent = profile.email;
+        }
+
+        // Update location
+        const locationSpan = document.getElementById('profile-location');
+        if (locationSpan && profile.location) {
+            locationSpan.textContent = profile.location;
+        }
+
+        // Update join date
+        const joinDateSpan = document.getElementById('profile-join-date');
+        if (joinDateSpan && profile.joined_date) {
+            const joinDate = new Date(profile.joined_date);
+            const formattedDate = joinDate.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long'
+            });
+            joinDateSpan.textContent = `Joined ${formattedDate}`;
+        }
+
+        // Update career goal (using preferred job title as a placeholder)
+        const careerGoalElement = document.getElementById('profile-career-goal');
+        if (careerGoalElement && profile.preferred_job_title) {
+            careerGoalElement.textContent = `Aiming to excel in ${profile.preferred_job_title} roles and advance my career in this field.`;
+        }
+    }
+
+    // Placeholder function for downloading CV
+    function downloadCV() {
+        // TODO: Implement CV download functionality
+        alert('CV download functionality will be implemented here. This would typically generate or fetch a PDF version of the user\'s resume.');
+    }
+
+    // Initialize when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        loadUserProfile();
+
+        // Set up download CV button
+        const downloadButton = document.querySelector('button.bg-surface-container-high.text-on-surface');
+        if (downloadButton) {
+            downloadButton.addEventListener('click', downloadCV);
+        }
+    });
+</script>
 </body></html>
