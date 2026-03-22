@@ -274,8 +274,46 @@
                 </div>
                 <div class="relative z-10 w-full h-full flex items-center justify-center">
                   <svg class="w-full h-full transform -rotate-18" viewbox="0 0 100 100">
-                    <polygon fill="none" points="50,10 85,35 75,85 25,85 15,35" stroke="#6f7979" stroke-dasharray="2,2" stroke-width="1"></polygon>
-                    <polygon fill="rgba(0, 69, 69, 0.2)" points="50,20 80,40 70,75 30,75 20,40" stroke="#004545" stroke-width="2"></polygon>
+                    <!-- Claimed proficiency (outer + inner stroke) -->
+                    <polygon
+                      fill="none"
+                      points="50,10 85,35 75,85 25,85 15,35"
+                      stroke="#bec9c8"
+                      stroke-width="1.5"
+                      stroke-linejoin="miter"
+                      stroke-linecap="butt"
+                    ></polygon>
+                    <polygon
+                      fill="none"
+                      points="50,10 85,35 75,85 25,85 15,35"
+                      stroke="#6f7979"
+                      stroke-width="0.75"
+                      stroke-linejoin="miter"
+                      stroke-linecap="butt"
+                    ></polygon>
+
+                    <!-- Verified performance (fill + outer + inner stroke) -->
+                    <polygon
+                      fill="rgba(0, 69, 69, 0.08)"
+                      points="50,20 80,40 70,75 30,75 20,40"
+                      stroke="none"
+                    ></polygon>
+                    <polygon
+                      fill="none"
+                      points="50,20 80,40 70,75 30,75 20,40"
+                      stroke="#8ad3d2"
+                      stroke-width="2"
+                      stroke-linejoin="miter"
+                      stroke-linecap="butt"
+                    ></polygon>
+                    <polygon
+                      fill="none"
+                      points="50,20 80,40 70,75 30,75 20,40"
+                      stroke="#004545"
+                      stroke-width="1"
+                      stroke-linejoin="miter"
+                      stroke-linecap="butt"
+                    ></polygon>
                   </svg>
                 </div>
                 <span class="absolute top-4 left-1/2 -translate-x-1/2 text-[10px] font-bold text-outline">Frontend</span>
@@ -286,11 +324,11 @@
               </div>
               <div class="mt-8 space-y-3">
                 <div class="flex items-center gap-3">
-                  <div class="w-3 h-3 rounded-sm border border-outline border-dashed"></div>
+                  <div class="w-2.5 h-2.5 rounded-sm border border-outline ring-1 ring-outline-variant"></div>
                   <span class="text-sm text-on-surface-variant font-medium">Claimed Proficiency</span>
                 </div>
                 <div class="flex items-center gap-3">
-                  <div class="w-3 h-3 rounded-sm bg-primary/20 border border-primary"></div>
+                  <div class="w-2.5 h-2.5 rounded-sm bg-primary/10 border border-primary ring-1 ring-inverse-primary/60"></div>
                   <span class="text-sm text-on-surface-variant font-medium">Verified Performance</span>
                 </div>
               </div>
